@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package appeal;
+option go_package="./appeal";
+//投诉接口---学生可投诉督导员
+message ComplainRequest {
+  uint64 SupervisorID = 1;
+  string SupervisorName= 2;
+  string SchoolName = 3;
+  
+  uint64 StudentID = 4;
+  string CounsellorName = 5;
+  uint64 CounsellorID = 6;
+
+  string Reason = 7;
+}
+
+message ComplainResponse {
+  uint32  Status = 1;
+  string  Message = 2;
+  string  Error = 3;
+}
+
+service Complaint {
+  rpc ComplainSupervisor(ComplainRequest) returns(ComplainResponse);
+}

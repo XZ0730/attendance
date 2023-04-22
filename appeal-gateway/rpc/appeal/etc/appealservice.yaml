@@ -1,0 +1,9 @@
+Name: appealservice.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+    - 43.136.122.18:2379
+  Key: appealservice.rpc
+Mysql:
+  DataSource: attendanceSystem:147258@tcp(47.113.216.236:3306)/attendancesystem?charset=utf8mb4&parseTime=True&loc=Local
+Addr: 43.136.122.18:6379

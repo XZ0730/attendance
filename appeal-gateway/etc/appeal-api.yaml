@@ -1,0 +1,8 @@
+Name: appeal-api
+Host: 0.0.0.0
+Port: 8888
+AppealCli:
+  Etcd:
+    Hosts:
+    - 43.136.122.18:2379
+    Key: appealservice.rpc

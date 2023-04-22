@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package appeal;
+option go_package="./appeal";
+
+message AppealRequest {
+  uint64 StudentID = 1;
+  string ContactPhone = 2;
+  string EmergencyName = 3;
+  string EmergencyPhone = 4;
+  string CounsellorName = 5;
+  uint64 CounsellorID = 6;
+  string LeaveReason = 7;
+  string CourseName = 8;
+  uint64 CourseID = 9;
+  int32 LeaveCourseFrom = 10;
+  int32 LeaveCourseTo = 11;
+  uint32 TagAs = 12;
+}
+message AppealModel{
+  uint64 StudentID = 1;
+  string ContactPhone = 2;
+
+  string EmergencyName = 3;
+  string EmergencyPhone = 4;
+  string CounsellorName = 5;
+  uint64 CounsellorID = 6;
+  string LeaveReason = 7;
+  string CourseName = 8;
+  uint64 CourseID = 9;
+
+  int32 LeaveCourseFrom = 10;
+  int32 LeaveCourseTo = 11;
+  uint32 TagAs = 12;
+  uint32 IsAudit = 13;
+}
+message AppealListRequset{
+  uint64 StudentID = 1;
+}
+message AppealListReply {
+  uint32  Status = 1;
+  string  Message = 2;
+  repeated AppealModel AppealList = 3;
+  uint32 total= 4;
+  string Error = 5;
+}
+message AppealResponse {
+  uint32  Status = 1;
+  string  Message = 2;
+  string  Error = 3;
+}
+
+service Appeal {
+  rpc StudentAskforLeave(AppealRequest) returns (AppealResponse);
+  rpc GetAppealListBySid(AppealListRequset)returns(AppealListReply);
+}
