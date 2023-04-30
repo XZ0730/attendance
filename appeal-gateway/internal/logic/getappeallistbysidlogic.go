@@ -5,7 +5,7 @@ import (
 
 	"appeal-gateway/internal/svc"
 	"appeal-gateway/internal/types"
-	"appeal-gateway/rpc/appeal/appeal"
+	"appeal/appeal"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

@@ -5,7 +5,7 @@ import (
 
 	"appeal-gateway/internal/svc"
 	"appeal-gateway/internal/types"
-	"appeal-gateway/rpc/appeal/appeal"
+	"appeal/appeal"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,17 +32,18 @@ func (l *StudentAskforLeaveLogic) StudentAskforLeave(req *types.AppealRequest) (
 		EmergencyName:  req.EmergencyName,
 		EmergencyPhone: req.EmergencyPhone,
 		//辅导员信息
-		CounsellorName: "zzb",
+		CounsellorName: req.CounsellorName,
 		CounsellorID:   req.CounsellorID,
 		//申诉-请假理由
 		LeaveReason: req.LeaveReason,
 		//申诉-请假课程
 		CourseName:      req.CourseName,
 		CourseID:        req.CourseID,
-		LeaveCourseFrom: int32(req.LeaveCourseFrom),
-		LeaveCourseTo:   int32(req.LeaveCourseTo),
+		LeaveCourseFrom: uint32(req.LeaveCourseFrom),
+		LeaveCourseTo:   uint32(req.LeaveCourseTo),
 		//申诉表-请假条区分
-		TagAs: uint32(req.TagAs),
+		TagAs:      uint32(req.TagAs),
+		University: req.University,
 	})
 	if err != nil {
 		return &types.AppealResponse{

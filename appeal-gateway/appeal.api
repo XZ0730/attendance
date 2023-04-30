@@ -8,7 +8,7 @@ info (
 )
 
 type AppealRequest {
-	StudentID uint64 `json:"student_id,omitempty" form:"student_id"`
+	StudentID string `json:"student_id,omitempty" form:"student_id"`
 
 	ContactPhone string `json:"contact_phone,omitempty" form:"contact_phone"`
 
@@ -16,22 +16,23 @@ type AppealRequest {
 	EmergencyPhone string `json:"emergency_phone,omitempty" form:"emergency_phone"`
 
 	CounsellorName string `json:"counsellor_name,omitempty" form:"counsellor_name"`
-	CounsellorID   uint64 `json:"counsellor_id,omitempty" form:"counsellor_id"`
+	CounsellorID   string `json:"counsellor_id,omitempty" form:"counsellor_id"`
 
 	//申诉-请假理由
 	LeaveReason string `json:"reason" form:"reason"`
 	//申诉-请假课程
 	CourseName string `json:"course_name" form:"course_name"`
-	CourseID   uint64 `json:"course_id" form:"course_id"`
+	CourseID   string `json:"course_id" form:"course_id"`
 	//课时起止
 	LeaveCourseFrom int `json:"lea_from" form:"lea_from"`
 	LeaveCourseTo   int `json:"lea_to" form:"lea_to"`
 	//申诉表-请假条区分
-	TagAs uint `json:"tag" form:"tag"` //默认为请假条
+	TagAs      uint   `json:"tag" form:"tag"` //默认为请假条
+	University string `json:"university" form:"university"`
 }
 
 type AppealListRequest {
-	StudentID uint64 `json:"student_id" form:"student_id"`
+	StudentID string `json:"student_id" form:"student_id"`
 }
 type ListReply {
 	Status  uint32      `json:"status"`
@@ -45,6 +46,38 @@ type AppealResponse {
 	Message string `json:"msg"`
 	Error   string `json:"error"`
 }
+type ComplainRequest {
+	SupervisorID   string `json:"supervisor_id" form:"supervisor_id"`
+	SupervisorName string `json:"supervisorName" form:"supervisorName"`
+	SchoolName     string `json:"schoolName" form:"schoolName"`
+
+	Reason string `json:"reason" form:"reason"`
+
+	CounsellorName string `json:"counsellor_name" form:"counsellor_name"`
+	CounsellorID   string `json:"counsellor_id" form:"counsellor_id"`
+
+	StudentID string `json:"student_id" form:"student_id"`
+}
+type ComplainResponse {
+	Status  uint32 `json:"status"`
+	Message string `json:"msg"`
+	Error   string `json:"error"`
+}
+type ComplainGetRequest {
+	CounsellorID   string `json:"counsellor_id" form:"counsellor_id"`
+	College        string `json:"college" form:"college"`
+	Major          string `json:"major" form:"major"`
+	StudentName    string `json:"student_name" form:"studnet_name"`
+	SupervisorName string `json:"supervisorname" form:"supervisor_name"`
+	SupervisorID   string `json:"supervisor_id" form:"supervisor_id"`
+}
+type ComplainPassReqest {
+	Cid          uint64 `json:"cid" form:"cid"`
+	CounsellorID string `json:"counsellor_id" form:"counsellor_id"`
+	SupervisorID string `json:"supervisor_id" form:"supervisor_id"`
+	University   string `json:"university" form:"university"`
+	Pass         uint   `json:"pass" form:"pass"`
+}
 
 service appeal-api {
 	@handler StudentAskforLeave // TODO: set handler name and delete this comment
@@ -52,4 +85,13 @@ service appeal-api {
 	
 	@handler GetAppealListBySid // TODO: set handler name and delete this comment
 	get /appealLeave(AppealListRequest) returns(ListReply)
+	
+	@handler ComplainToSupervisor
+	post /stu/complain(ComplainRequest) returns(ComplainResponse)
+	
+	@handler GetComplainTables
+	get /stu/complain(ComplainGetRequest) returns(ListReply)
+	
+	@handler PassComplainTables
+	delete /stu/complain(ComplainPassReqest) returns(AppealResponse)
 }

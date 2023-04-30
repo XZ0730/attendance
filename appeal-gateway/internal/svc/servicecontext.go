@@ -2,7 +2,7 @@ package svc
 
 import (
 	"appeal-gateway/internal/config"
-	"appeal-gateway/rpc/appeal/appealclient"
+	"appeal/appealclient"
 
 	"github.com/zeromicro/go-zero/zrpc"
 )

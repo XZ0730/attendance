@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v3.19.5
-// source: appealservice.proto
+// source: appealService.proto
 
 package appeal
 
@@ -19,8 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Appeal_StudentAskforLeave_FullMethodName = "/appeal.Appeal/StudentAskforLeave"
-	Appeal_GetAppealListBySid_FullMethodName = "/appeal.Appeal/GetAppealListBySid"
+	Appeal_StudentAskforLeave_FullMethodName   = "/appeal.Appeal/StudentAskforLeave"
+	Appeal_GetAppealListBySid_FullMethodName   = "/appeal.Appeal/GetAppealListBySid"
+	Appeal_ComplainToSupervisor_FullMethodName = "/appeal.Appeal/ComplainToSupervisor"
+	Appeal_GetComplainTables_FullMethodName    = "/appeal.Appeal/GetComplainTables"
+	Appeal_PassComplainTables_FullMethodName   = "/appeal.Appeal/PassComplainTables"
 )
 
 // AppealClient is the client API for Appeal service.
@@ -29,6 +32,9 @@ const (
 type AppealClient interface {
 	StudentAskforLeave(ctx context.Context, in *AppealRequest, opts ...grpc.CallOption) (*AppealResponse, error)
 	GetAppealListBySid(ctx context.Context, in *AppealListRequset, opts ...grpc.CallOption) (*AppealListReply, error)
+	ComplainToSupervisor(ctx context.Context, in *ComplainRequest, opts ...grpc.CallOption) (*ComplainResponse, error)
+	GetComplainTables(ctx context.Context, in *ComplainGetRequest, opts ...grpc.CallOption) (*ComplainResponse, error)
+	PassComplainTables(ctx context.Context, in *ComplainPassRequest, opts ...grpc.CallOption) (*AppealResponse, error)
 }
 
 type appealClient struct {
@@ -57,12 +63,42 @@ func (c *appealClient) GetAppealListBySid(ctx context.Context, in *AppealListReq
 	return out, nil
 }
 
+func (c *appealClient) ComplainToSupervisor(ctx context.Context, in *ComplainRequest, opts ...grpc.CallOption) (*ComplainResponse, error) {
+	out := new(ComplainResponse)
+	err := c.cc.Invoke(ctx, Appeal_ComplainToSupervisor_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appealClient) GetComplainTables(ctx context.Context, in *ComplainGetRequest, opts ...grpc.CallOption) (*ComplainResponse, error) {
+	out := new(ComplainResponse)
+	err := c.cc.Invoke(ctx, Appeal_GetComplainTables_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appealClient) PassComplainTables(ctx context.Context, in *ComplainPassRequest, opts ...grpc.CallOption) (*AppealResponse, error) {
+	out := new(AppealResponse)
+	err := c.cc.Invoke(ctx, Appeal_PassComplainTables_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AppealServer is the server API for Appeal service.
 // All implementations must embed UnimplementedAppealServer
 // for forward compatibility
 type AppealServer interface {
 	StudentAskforLeave(context.Context, *AppealRequest) (*AppealResponse, error)
 	GetAppealListBySid(context.Context, *AppealListRequset) (*AppealListReply, error)
+	ComplainToSupervisor(context.Context, *ComplainRequest) (*ComplainResponse, error)
+	GetComplainTables(context.Context, *ComplainGetRequest) (*ComplainResponse, error)
+	PassComplainTables(context.Context, *ComplainPassRequest) (*AppealResponse, error)
 	mustEmbedUnimplementedAppealServer()
 }
 
@@ -75,6 +111,15 @@ func (UnimplementedAppealServer) StudentAskforLeave(context.Context, *AppealRequ
 }
 func (UnimplementedAppealServer) GetAppealListBySid(context.Context, *AppealListRequset) (*AppealListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAppealListBySid not implemented")
+}
+func (UnimplementedAppealServer) ComplainToSupervisor(context.Context, *ComplainRequest) (*ComplainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ComplainToSupervisor not implemented")
+}
+func (UnimplementedAppealServer) GetComplainTables(context.Context, *ComplainGetRequest) (*ComplainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetComplainTables not implemented")
+}
+func (UnimplementedAppealServer) PassComplainTables(context.Context, *ComplainPassRequest) (*AppealResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PassComplainTables not implemented")
 }
 func (UnimplementedAppealServer) mustEmbedUnimplementedAppealServer() {}
 
@@ -125,6 +170,60 @@ func _Appeal_GetAppealListBySid_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Appeal_ComplainToSupervisor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ComplainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppealServer).ComplainToSupervisor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Appeal_ComplainToSupervisor_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppealServer).ComplainToSupervisor(ctx, req.(*ComplainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Appeal_GetComplainTables_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ComplainGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppealServer).GetComplainTables(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Appeal_GetComplainTables_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppealServer).GetComplainTables(ctx, req.(*ComplainGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Appeal_PassComplainTables_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ComplainPassRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppealServer).PassComplainTables(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Appeal_PassComplainTables_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppealServer).PassComplainTables(ctx, req.(*ComplainPassRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Appeal_ServiceDesc is the grpc.ServiceDesc for Appeal service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -140,7 +239,19 @@ var Appeal_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetAppealListBySid",
 			Handler:    _Appeal_GetAppealListBySid_Handler,
 		},
+		{
+			MethodName: "ComplainToSupervisor",
+			Handler:    _Appeal_ComplainToSupervisor_Handler,
+		},
+		{
+			MethodName: "GetComplainTables",
+			Handler:    _Appeal_GetComplainTables_Handler,
+		},
+		{
+			MethodName: "PassComplainTables",
+			Handler:    _Appeal_PassComplainTables_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "appealservice.proto",
+	Metadata: "appealService.proto",
 }

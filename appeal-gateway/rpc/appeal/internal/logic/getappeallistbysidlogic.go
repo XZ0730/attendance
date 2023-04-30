@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 
-	"appeal-gateway/rpc/appeal/appeal"
-	"appeal-gateway/rpc/appeal/internal/svc"
-	"appeal-gateway/rpc/appeal/model"
+	"appeal/appeal"
+	"appeal/internal/svc"
+	"appeal/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -28,7 +28,7 @@ func (l *GetAppealListBySidLogic) GetAppealListBySid(in *appeal.AppealListRequse
 	// todo: add your logic here and delete this line
 	lea_list := make([]*appeal.AppealModel, 0)
 	err := l.svcCtx.MysqlDB.Model(&model.LeaveTable{}).Order("created_at desc").
-		Where("student_id=? AND tag_as=1", in.GetStudentID()).Find(&lea_list).Error
+		Where("student_id=?", in.GetStudentID()).Find(&lea_list).Error
 	if err != nil {
 		return &appeal.AppealListReply{
 			Status:  30021,

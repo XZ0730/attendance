@@ -5,10 +5,10 @@ import "gorm.io/gorm"
 type LeaveTable struct {
 	gorm.Model
 	//学生信息
-	StudentID    uint64 `gorm:"not null"`
+	StudentID    string `gorm:"not null"`
 	StudentName  string
 	StudentMajor string
-	StudentClass string
+	StudentClass uint
 	College      string
 	//手机号联系方式
 	ContactPhone string `gorm:"not null"`
@@ -19,12 +19,12 @@ type LeaveTable struct {
 	SchoolName string `gorm:"not null"`
 	//辅导员信息
 	CounsellorName string `gorm:"not null"`
-	CounsellorID   uint64 `gorm:"not null"`
+	CounsellorID   string `gorm:"not null"`
 	//申诉-请假理由
 	LeaveReason string
 	//申诉-请假课程
 	CourseName string `gorm:"not null"`
-	CourseID   uint64 `gorm:"not null"`
+	CourseID   string `gorm:"not null"`
 	//课时起止
 	LeaveCourseFrom int `gorm:"not null"`
 	LeaveCourseTo   int `gorm:"not null"`

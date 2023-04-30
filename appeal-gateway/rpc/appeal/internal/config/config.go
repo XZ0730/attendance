@@ -7,5 +7,6 @@ type Config struct {
 	Mysql struct {
 		DataSource string
 	}
-	Addr string
+	Addr  string
+	MqCli zrpc.RpcClientConf
 }

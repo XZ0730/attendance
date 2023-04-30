@@ -4,30 +4,31 @@ package appeal;
 option go_package="./appeal";
 
 message AppealRequest {
-  uint64 StudentID = 1;
+  string StudentID = 1;
   string ContactPhone = 2;
   string EmergencyName = 3;
   string EmergencyPhone = 4;
   string CounsellorName = 5;
-  uint64 CounsellorID = 6;
+  string CounsellorID = 6;
   string LeaveReason = 7;
   string CourseName = 8;
-  uint64 CourseID = 9;
-  int32 LeaveCourseFrom = 10;
-  int32 LeaveCourseTo = 11;
+  string CourseID = 9;
+  uint32 LeaveCourseFrom = 10;
+  uint32 LeaveCourseTo = 11;
   uint32 TagAs = 12;
+  string University= 13;
 }
 message AppealModel{
-  uint64 StudentID = 1;
+  string StudentID = 1;
   string ContactPhone = 2;
 
   string EmergencyName = 3;
   string EmergencyPhone = 4;
   string CounsellorName = 5;
-  uint64 CounsellorID = 6;
+  string CounsellorID = 6;
   string LeaveReason = 7;
   string CourseName = 8;
-  uint64 CourseID = 9;
+  string CourseID = 9;
 
   int32 LeaveCourseFrom = 10;
   int32 LeaveCourseTo = 11;
@@ -35,7 +36,7 @@ message AppealModel{
   uint32 IsAudit = 13;
 }
 message AppealListRequset{
-  uint64 StudentID = 1;
+  string StudentID = 1;
 }
 message AppealListReply {
   uint32  Status = 1;
@@ -50,7 +51,63 @@ message AppealResponse {
   string  Error = 3;
 }
 
+message ComplainRequest{
+  string SupervisorID = 1;
+  string SupervisorName= 2;
+  string SchoolName=3;
+
+  string Reason = 4;
+
+  string CounsellorName = 5;
+  string CounsellorID = 6;
+
+  string StudentID = 7;
+}
+message ComplainModel {
+  uint64 ID = 1;
+  string SupervisorID = 2;
+  string SupervisorName = 3;
+  string Supervisor_Major = 4;
+  string Supervisor_College = 5;
+  string SchoolName = 6;
+  string Reason = 7;
+  string StudentID = 8;
+  string StudentName = 9;
+  string Student_Major = 10;
+  string College = 11;
+}
+
+message ComplainResponse{
+  uint32  Status = 1;
+  string  Message = 2;
+  repeated ComplainModel ComplainList = 3;
+  uint32 total= 4;
+  string Error = 5;
+}
+message ComplainGetRequest{
+  string ConsellorID = 1;
+  string College = 2;
+  string Major = 3;
+  string StudentName= 4;
+  string SupervisorName= 5;
+  string SupervisorId= 6;
+}
+message ComplainPassRequest {
+  uint64 Cid = 1;
+  string ConsellorID =2;
+  string SupervisorID= 3;
+  string SchoolName = 4;
+  bool Pass = 5;
+  //pass由query传入
+}
 service Appeal {
   rpc StudentAskforLeave(AppealRequest) returns (AppealResponse);
   rpc GetAppealListBySid(AppealListRequset)returns(AppealListReply);
+
+  rpc ComplainToSupervisor(ComplainRequest)returns(ComplainResponse);
+  rpc GetComplainTables(ComplainGetRequest)returns(ComplainResponse);
+
+  rpc PassComplainTables(ComplainPassRequest)returns(AppealResponse);
+  
+  // rpc PassComplainTables()
 }

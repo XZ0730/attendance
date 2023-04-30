@@ -22,6 +22,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/appealLeave",
 				Handler: GetAppealListBySidHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/stu/complain",
+				Handler: ComplainToSupervisorHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/stu/complain",
+				Handler: GetComplainTablesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/stu/complain",
+				Handler: PassComplainTablesHandler(serverCtx),
+			},
 		},
 	)
 }

@@ -1,0 +1,8 @@
+go 1.19
+
+use (
+	./appeal-gateway
+	./appeal-gateway/rpc/appeal
+	./appeal-gateway/rpc/mq_server
+	./attendance-gateway
+)

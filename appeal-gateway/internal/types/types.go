@@ -2,22 +2,23 @@
 package types
 
 type AppealRequest struct {
-	StudentID       uint64 `json:"student_id,omitempty" form:"student_id"`
+	StudentID       string `json:"student_id,omitempty" form:"student_id"`
 	ContactPhone    string `json:"contact_phone,omitempty" form:"contact_phone"`
 	EmergencyName   string `json:"emergency_name,omitempty" form:"emergency_name"`
 	EmergencyPhone  string `json:"emergency_phone,omitempty" form:"emergency_phone"`
 	CounsellorName  string `json:"counsellor_name,omitempty" form:"counsellor_name"`
-	CounsellorID    uint64 `json:"counsellor_id,omitempty" form:"counsellor_id"`
+	CounsellorID    string `json:"counsellor_id,omitempty" form:"counsellor_id"`
 	LeaveReason     string `json:"reason" form:"reason"`
 	CourseName      string `json:"course_name" form:"course_name"`
-	CourseID        uint64 `json:"course_id" form:"course_id"`
+	CourseID        string `json:"course_id" form:"course_id"`
 	LeaveCourseFrom int    `json:"lea_from" form:"lea_from"`
 	LeaveCourseTo   int    `json:"lea_to" form:"lea_to"`
 	TagAs           uint   `json:"tag" form:"tag"` //默认为请假条
+	University      string `json:"university" form:"university"`
 }
 
 type AppealListRequest struct {
-	StudentID uint64 `json:"student_id" form:"student_id"`
+	StudentID string `json:"student_id" form:"student_id"`
 }
 
 type ListReply struct {
@@ -32,4 +33,37 @@ type AppealResponse struct {
 	Status  uint32 `json:"status"`
 	Message string `json:"msg"`
 	Error   string `json:"error"`
+}
+
+type ComplainRequest struct {
+	SupervisorID   string `json:"supervisor_id" form:"supervisor_id"`
+	SupervisorName string `json:"supervisorName" form:"supervisorName"`
+	SchoolName     string `json:"schoolName" form:"schoolName"`
+	Reason         string `json:"reason" form:"reason"`
+	CounsellorName string `json:"counsellor_name" form:"counsellor_name"`
+	CounsellorID   string `json:"counsellor_id" form:"counsellor_id"`
+	StudentID      string `json:"student_id" form:"student_id"`
+}
+
+type ComplainResponse struct {
+	Status  uint32 `json:"status"`
+	Message string `json:"msg"`
+	Error   string `json:"error"`
+}
+
+type ComplainGetRequest struct {
+	CounsellorID   string `json:"counsellor_id" form:"counsellor_id"`
+	College        string `json:"college" form:"college"`
+	Major          string `json:"major" form:"major"`
+	StudentName    string `json:"student_name" form:"studnet_name"`
+	SupervisorName string `json:"supervisorname" form:"supervisor_name"`
+	SupervisorID   string `json:"supervisor_id" form:"supervisor_id"`
+}
+
+type ComplainPassReqest struct {
+	Cid          uint64 `json:"cid" form:"cid"`
+	CounsellorID string `json:"counsellor_id" form:"counsellor_id"`
+	SupervisorID string `json:"supervisor_id" form:"supervisor_id"`
+	University   string `json:"university" form:"university"`
+	Pass         uint   `json:"pass" form:"pass"`
 }

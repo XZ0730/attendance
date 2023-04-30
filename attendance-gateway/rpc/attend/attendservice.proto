@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package attendservice;
+option go_package="./attendservice";
+
+message PullAttRequest {
+  string SupervisorID = 1;
+  float Longitude = 2;
+  float Latitude = 3;
+  string CourseID = 4;
+}
+
+message AttResponse {
+  uint32 Status = 1;
+  string Message = 2;
+  string Error = 3;
+}
+
+service Attendservice {
+  rpc PullAttendance(PullAttRequest) returns(AttResponse);
+}

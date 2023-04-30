@@ -4,10 +4,10 @@ import (
 	"flag"
 	"fmt"
 
-	"appeal-gateway/rpc/appeal/appeal"
-	"appeal-gateway/rpc/appeal/internal/config"
-	"appeal-gateway/rpc/appeal/internal/server"
-	"appeal-gateway/rpc/appeal/internal/svc"
+	"appeal/appeal"
+	"appeal/internal/config"
+	"appeal/internal/server"
+	"appeal/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"

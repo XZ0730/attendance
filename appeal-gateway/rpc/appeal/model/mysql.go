@@ -1,7 +1,7 @@
 package model
 
 import (
-	"appeal-gateway/rpc/appeal/internal/config"
+	"appeal/internal/config"
 	"fmt"
 	"time"
 
@@ -47,7 +47,7 @@ func Init(c *config.Config) *gorm.DB {
 }
 func Migrate(DB *gorm.DB) {
 	err := DB.Set(`gorm:table_options`, "charset=utf8mb4").
-		AutoMigrate(&LeaveTable{})
+		AutoMigrate(&LeaveTable{}, &ComplainTable{})
 	if err != nil {
 		fmt.Println(err)
 		panic(err)

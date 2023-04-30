@@ -1,0 +1,39 @@
+syntax = "v1"
+
+info (
+	title: // TODO: add title
+	desc: // TODO: add description
+	author: "张鑫"
+	email: "1055275260@qq.com"
+)
+
+type PullAttRequest {
+	// TODO: add members here and delete this comment
+	// 前端传来经纬度，存入redis geo中 key为课程id
+	// 判断当前时间是否为课前10分钟---redis中设置当前课程为上课状态
+	//发布任务放入延时队列
+	// 用户定位签到时 发送自身经纬度定位，然后用redis计算距离
+	// 同时还要判断当前课程点名是否结束---加锁
+	// 督导员点名签到-->建立ws链接--》
+	//判断目前是否在点名-->redis中设置学号-状态为已签到
+	//延时队列结束--取出任务，获取所有已经签到学生学号
+	SupervisorID string  `json:"supervisor_id" form:"supervisor_id"`
+	Longitude    float64 `json:"longitude" form:"longitude"`
+	Latitude     float64 `json:"latitude" form:"latitude"`
+	CourseID     string  `json:"course_id" form:"course_id"`
+}
+
+type AttResponse {
+	// TODO: add members here and delete this comment
+	Status  uint32 `json:"status"`
+	Message string `json:"message"`
+	Error   string `json:"error"`
+}
+
+service attendance-api {
+	//@handler GetUser // TODO: set handler name and delete this comment
+	//get /users/id/:userId(request) returns(response)
+	
+	@handler PullAttandance // TODO: set handler name and delete this comment
+	post /sup/attendance(PullAttRequest)returns(AttResponse)
+}

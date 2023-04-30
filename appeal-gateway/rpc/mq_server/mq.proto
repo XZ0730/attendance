@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package mq;
+option go_package="./mq";
+
+message Request {
+  uint64 Cid = 1;
+  string Counsellor_id= 2;
+}
+
+message Response {
+  string Message = 1;
+}
+message LeaveRequest {
+  string Queuename= 1;
+  string Data= 2;
+}
+service Mq {
+  rpc Publish(Request) returns(Response);
+  rpc PublishLeave(LeaveRequest) returns (Response);
+}
