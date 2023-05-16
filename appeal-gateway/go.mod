@@ -2,7 +2,10 @@ module appeal-gateway
 
 go 1.19
 
-require github.com/zeromicro/go-zero v1.5.1
+require (
+	github.com/SimonWang00/goeureka v1.0.2
+	github.com/zeromicro/go-zero v1.5.1
+)
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect

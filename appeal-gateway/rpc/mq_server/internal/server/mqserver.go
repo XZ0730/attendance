@@ -31,3 +31,8 @@ func (s *MqServer) PublishLeave(ctx context.Context, in *mq.LeaveRequest) (*mq.R
 	l := logic.NewPublishLeaveLogic(ctx, s.svcCtx)
 	return l.PublishLeave(in)
 }
+
+func (s *MqServer) PublishPull(ctx context.Context, in *mq.AttRequest) (*mq.Response, error) {
+	l := logic.NewPublishPullLogic(ctx, s.svcCtx)
+	return l.PublishPull(in)
+}

@@ -17,6 +17,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/sup/attendance",
 				Handler: PullAttandanceHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/sup/normal",
+				Handler: NormalAttendHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/sup/location",
+				Handler: LocationAttendHandler(serverCtx),
+			},
 		},
 	)
 }

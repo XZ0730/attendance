@@ -46,3 +46,8 @@ func (s *AppealServer) PassComplainTables(ctx context.Context, in *appeal.Compla
 	l := logic.NewPassComplainTablesLogic(ctx, s.svcCtx)
 	return l.PassComplainTables(in)
 }
+
+func (s *AppealServer) PassAppealTables(ctx context.Context, in *appeal.AppealPassRequest) (*appeal.AppealResponse, error) {
+	l := logic.NewPassAppealTablesLogic(ctx, s.svcCtx)
+	return l.PassAppealTables(in)
+}

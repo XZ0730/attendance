@@ -32,3 +32,22 @@ type LeaveTable struct {
 	TagAs   uint `gorm:"default:1"` //默认为请假条
 	IsAudit uint `gorm:"default:1"` //1为未审核 2为审核已通过
 }
+type Result struct {
+	Code        string
+	StudentName string
+	CourseId    string
+	Week        uint
+	MissAttend  bool
+}
+type AttendTable struct {
+	gorm.Model
+
+	CourseID      string
+	CourseName    string
+	Week          uint
+	Teacher       string
+	University    string
+	Unpresent     uint
+	Unpresenter   string
+	UnpresenterID string
+}

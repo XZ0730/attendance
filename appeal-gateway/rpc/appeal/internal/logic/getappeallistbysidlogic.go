@@ -7,6 +7,8 @@ import (
 	"appeal/internal/svc"
 	"appeal/model"
 
+	"appeal/common/errorx"
+
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -27,20 +29,32 @@ func NewGetAppealListBySidLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 func (l *GetAppealListBySidLogic) GetAppealListBySid(in *appeal.AppealListRequset) (*appeal.AppealListReply, error) {
 	// todo: add your logic here and delete this line
 	lea_list := make([]*appeal.AppealModel, 0)
-	err := l.svcCtx.MysqlDB.Model(&model.LeaveTable{}).Order("created_at desc").
-		Where("student_id=?", in.GetStudentID()).Find(&lea_list).Error
-	if err != nil {
-		return &appeal.AppealListReply{
-			Status:  30021,
-			Message: "拉取失败",
-			Error:   err.Error(),
-		}, err
+	if in.GetTag() == 1 {
+		err := l.svcCtx.MysqlDB.Model(&model.LeaveTable{}).Order("created_at desc").
+			Where("student_id=?", in.GetStudentID()).Find(&lea_list).Error
+		if err != nil {
+			return &appeal.AppealListReply{
+				Status:  errorx.FailTOPull,
+				Message: errorx.GetERROR(errorx.FailTOPull),
+				Error:   err.Error(),
+			}, nil
+		}
+	} else {
+		err := l.svcCtx.MysqlDB.Model(&model.LeaveTable{}).Order("created_at desc").
+			Where("counsellor_id=?", in.GetCounsellorID()).Find(&lea_list).Error
+		if err != nil {
+			return &appeal.AppealListReply{
+				Status:  errorx.FailTOPull,
+				Message: errorx.GetERROR(errorx.FailTOPull),
+				Error:   err.Error(),
+			}, nil
+		}
 	}
 
 	return &appeal.AppealListReply{
-		Status:     200,
+		Status:     errorx.SUCCESS,
 		AppealList: lea_list,
 		Total:      uint32(len(lea_list)),
-		Message:    "successful",
+		Message:    errorx.GetERROR(errorx.SUCCESS),
 	}, nil
 }

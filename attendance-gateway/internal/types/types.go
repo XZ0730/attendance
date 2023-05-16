@@ -9,7 +9,25 @@ type PullAttRequest struct {
 }
 
 type AttResponse struct {
-	Status  uint32 `json:"status"`
-	Message string `json:"message"`
-	Error   string `json:"error"`
+	Status  uint32      `json:"status"`
+	Data    interface{} `json:"data"`
+	Total   uint32      `json:"total"`
+	Message string      `json:"message"`
+	Error   string      `json:"error"`
+}
+
+type NormalAttReq struct {
+	CourseID   string `json:"course_id"`
+	StudentID  string `json:"student_id"`
+	University string `json:"university"`
+	CourseMain int64  `json:"course_main"`
+	Type       uint   `json:"type"`
+}
+
+type LocationAttReq struct {
+	StudentID    string  `json:"student_id"`
+	CourseMain   int64   `json:"course_main"`
+	SupervisorID string  `json:"supervisor_id"`
+	Longitude    float64 `json:"longitude"`
+	Latitude     float64 `json:"latitude"`
 }

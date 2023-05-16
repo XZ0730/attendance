@@ -32,7 +32,9 @@ type AppealRequest {
 }
 
 type AppealListRequest {
-	StudentID string `json:"student_id" form:"student_id"`
+	StudentID    string `json:"student_id" form:"student_id"`
+	CounsellorID string `json:"counsellor_id" form:"counsellor_id"`
+	Tag          uint   `json:"tag" form:"tag"` //1 查询当前用户的请假条 其他的话就查询counsellorid
 }
 type ListReply {
 	Status  uint32      `json:"status"`
@@ -78,7 +80,11 @@ type ComplainPassReqest {
 	University   string `json:"university" form:"university"`
 	Pass         uint   `json:"pass" form:"pass"`
 }
-
+type AppealPassRequest {
+	CourseMain int64 `json:"course_main" form:"course_main"`
+	Aid        int64 `json:"aid" form:"aid"`
+	Pass       uint  `json:"pass" form:"pass"`
+}
 service appeal-api {
 	@handler StudentAskforLeave // TODO: set handler name and delete this comment
 	post /appealLeave(AppealRequest) returns(AppealResponse)
@@ -94,4 +100,7 @@ service appeal-api {
 	
 	@handler PassComplainTables
 	delete /stu/complain(ComplainPassReqest) returns(AppealResponse)
+	
+	@handler PassAppealTable
+	post /stu/appeal(AppealPassRequest) returns(AppealResponse)
 }

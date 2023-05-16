@@ -1,6 +1,7 @@
 package model
 
 type Course struct {
+	Id           int64
 	CourseId     string
 	Name         string
 	WeekStart    uint32

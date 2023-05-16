@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"appeal/appeal"
+	"appeal/common/errorx"
 	"appeal/internal/svc"
 
 	// "appeal/model"
@@ -34,23 +35,23 @@ func (l *PassComplainTablesLogic) PassComplainTables(in *appeal.ComplainPassRequ
 	//删除逻辑---通过用户token携带的辅导员id传入
 	//通过的话，应该要有个扣除积分的操作
 	//未通过则普通删除
-	if in.GetPass() == true {
+	if in.GetPass() {
 		fmt.Println("扣除积分")
 
-		lock, err := disgo.GetLock(l.svcCtx.RDB, "test")
+		lock, err := disgo.GetLock(l.svcCtx.RDB2, "db2")
 		if err != nil {
 			fmt.Println("err:", err)
 		}
-		success, err2 := lock.TryLock(l.svcCtx.RDB.Context(), 5*time.Second, 10*time.Second)
+		success, err2 := lock.TryLock(l.ctx, 5*time.Second, 10*time.Second)
 		if !success {
 			return &appeal.AppealResponse{
-				Status:  39908,
-				Message: "系统繁忙稍后重试",
+				Status:  errorx.BusySysError,
+				Message: errorx.GetERROR(errorx.BusySysError),
 			}, err2
 		} //这边应该token传入 账户基本信息
 		//key:学校名称 member:code  score:信誉分
 		err3 := l.svcCtx.RDB2.
-			ZIncrBy(l.svcCtx.RDB2.Context(), in.GetSchoolName(), -2, in.GetSupervisorID()).
+			ZIncrBy(l.ctx, in.GetSchoolName(), -2, in.GetSupervisorID()).
 			Err()
 		// l.svcCtx.RDB.GeoAdd(l.svcCtx.RDB.Context(), "car", &redis.GeoLocation{
 		// 	Longitude: 22.22,
@@ -60,12 +61,13 @@ func (l *PassComplainTablesLogic) PassComplainTables(in *appeal.ComplainPassRequ
 		if err3 != nil {
 			fmt.Println("err3:", err3)
 		}
-		_, err2 = lock.Release(l.svcCtx.RDB.Context())
+		_, err2 = lock.Release(l.ctx)
 		if err2 != nil {
 			return &appeal.AppealResponse{
-				Status:  39908,
-				Message: "系统繁忙稍后重试",
-			}, err2
+				Status:  errorx.BusySysError,
+				Message: errorx.GetERROR(errorx.BusySysError),
+				Error:   err2.Error(),
+			}, nil
 		}
 	}
 	req := &mq.Request{
@@ -75,8 +77,8 @@ func (l *PassComplainTablesLogic) PassComplainTables(in *appeal.ComplainPassRequ
 	_, err := l.svcCtx.MQ.Publish(l.ctx, req)
 	if err != nil {
 		return &appeal.AppealResponse{
-			Status:  39901,
-			Message: "删除出错",
+			Status:  errorx.DeleteError,
+			Message: errorx.GetERROR(errorx.DeleteError),
 			Error:   err.Error(),
 		}, err
 	}

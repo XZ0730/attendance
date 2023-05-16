@@ -15,7 +15,12 @@ message LeaveRequest {
   string Queuename= 1;
   string Data= 2;
 }
+message AttRequest{
+  uint32 tag = 1;
+  string Data=2;
+}
 service Mq {
   rpc Publish(Request) returns(Response);
   rpc PublishLeave(LeaveRequest) returns (Response);
+  rpc PublishPull(AttRequest) returns (Response);
 }

@@ -6,18 +6,26 @@ package attendserviceclient
 import (
 	"context"
 
-	"attendance-gateway/rpc/attend/attendservice"
+	"attend/attendservice"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
 
 type (
-	AttResponse    = attendservice.AttResponse
-	PullAttRequest = attendservice.PullAttRequest
+	AttNorResponse     = attendservice.AttNorResponse
+	AttResponse        = attendservice.AttResponse
+	CourseMember       = attendservice.CourseMember
+	LocationAttRequest = attendservice.LocationAttRequest
+	NormalReqest       = attendservice.NormalReqest
+	PullAttRequest     = attendservice.PullAttRequest
 
 	Attendservice interface {
 		PullAttendance(ctx context.Context, in *PullAttRequest, opts ...grpc.CallOption) (*AttResponse, error)
+		NormalAttend(ctx context.Context, in *NormalReqest, opts ...grpc.CallOption) (*AttNorResponse, error)
+		// 传入stuid courseid university
+		AttMember(ctx context.Context, in *NormalReqest, opts ...grpc.CallOption) (*AttResponse, error)
+		LocationAttend(ctx context.Context, in *LocationAttRequest, opts ...grpc.CallOption) (*AttResponse, error)
 	}
 
 	defaultAttendservice struct {
@@ -34,4 +42,20 @@ func NewAttendservice(cli zrpc.Client) Attendservice {
 func (m *defaultAttendservice) PullAttendance(ctx context.Context, in *PullAttRequest, opts ...grpc.CallOption) (*AttResponse, error) {
 	client := attendservice.NewAttendserviceClient(m.cli.Conn())
 	return client.PullAttendance(ctx, in, opts...)
+}
+
+func (m *defaultAttendservice) NormalAttend(ctx context.Context, in *NormalReqest, opts ...grpc.CallOption) (*AttNorResponse, error) {
+	client := attendservice.NewAttendserviceClient(m.cli.Conn())
+	return client.NormalAttend(ctx, in, opts...)
+}
+
+// 传入stuid courseid university
+func (m *defaultAttendservice) AttMember(ctx context.Context, in *NormalReqest, opts ...grpc.CallOption) (*AttResponse, error) {
+	client := attendservice.NewAttendserviceClient(m.cli.Conn())
+	return client.AttMember(ctx, in, opts...)
+}
+
+func (m *defaultAttendservice) LocationAttend(ctx context.Context, in *LocationAttRequest, opts ...grpc.CallOption) (*AttResponse, error) {
+	client := attendservice.NewAttendserviceClient(m.cli.Conn())
+	return client.LocationAttend(ctx, in, opts...)
 }

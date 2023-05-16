@@ -25,15 +25,36 @@ type PullAttRequest {
 
 type AttResponse {
 	// TODO: add members here and delete this comment
-	Status  uint32 `json:"status"`
-	Message string `json:"message"`
-	Error   string `json:"error"`
+	Status  uint32      `json:"status"`
+	Data    interface{} `json:"data"`
+	Total   uint32      `json:"total"`
+	Message string      `json:"message"`
+	Error   string      `json:"error"`
 }
-
+type NormalAttReq {
+	CourseID   string `json:"course_id"`
+	StudentID  string `json:"student_id"`
+	University string `json:"university"`
+	CourseMain int64  `json:"course_main"`
+	Type       uint   `json:"type"`
+}
+type LocationAttReq {
+	StudentID    string  `json:"student_id"`
+	CourseMain   int64   `json:"course_main"`
+	SupervisorID string  `json:"supervisor_id"`
+	Longitude    float64 `json:"longitude"`
+	Latitude     float64 `json:"latitude"`
+}
 service attendance-api {
 	//@handler GetUser // TODO: set handler name and delete this comment
 	//get /users/id/:userId(request) returns(response)
 	
 	@handler PullAttandance // TODO: set handler name and delete this comment
 	post /sup/attendance(PullAttRequest)returns(AttResponse)
+	
+	@handler NormalAttend
+	get /sup/normal(NormalAttReq)returns(AttResponse)
+	
+	@handler LocationAttend
+	post /sup/location(LocationAttReq)returns(AttResponse)
 }

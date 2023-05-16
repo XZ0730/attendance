@@ -1,7 +1,9 @@
 package logic
 
 import (
+	"attend/attendserviceclient"
 	"context"
+	"fmt"
 
 	"attendance-gateway/internal/svc"
 	"attendance-gateway/internal/types"
@@ -25,6 +27,22 @@ func NewPullAttandanceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Pu
 
 func (l *PullAttandanceLogic) PullAttandance(req *types.PullAttRequest) (resp *types.AttResponse, err error) {
 	// todo: add your logic here and delete this line
-
-	return
+	// par := &attendservice.PullAttRequest{
+	// SupervisorID: req.SupervisorID,
+	// CourseID:     req.CourseID,
+	// Longitude:    req.Longitude,
+	// Latitude:     req.Latitude,
+	// }
+	rsp, err := l.svcCtx.Attendservice.PullAttendance(l.ctx, &attendserviceclient.PullAttRequest{
+		SupervisorID: req.SupervisorID,
+		CourseID:     req.CourseID,
+		Longitude:    req.Longitude,
+		Latitude:     req.Latitude,
+	})
+	fmt.Println("rsp:", rsp)
+	return &types.AttResponse{
+		Status:  rsp.Status,
+		Message: rsp.Message,
+		Error:   rsp.Error,
+	}, err
 }

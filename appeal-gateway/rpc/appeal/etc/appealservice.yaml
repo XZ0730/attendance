@@ -6,9 +6,14 @@ Etcd:
   Key: appealservice.rpc
 Mysql:
   DataSource: attendanceSystem:147258@tcp(47.113.216.236:3306)/attendancesystem?charset=utf8mb4&parseTime=True&loc=Local
-Addr: 43.136.122.18:6379
+Addr: 47.113.216.236:6379
 MqCli:
   Etcd:
     Hosts:
     - 43.136.122.18:2379
     Key: mq.rpc
+Telemetry:
+  Name: appealservice.rpc
+  Endpoint: http://172.17.0.8:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger

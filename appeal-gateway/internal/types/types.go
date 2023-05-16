@@ -18,7 +18,9 @@ type AppealRequest struct {
 }
 
 type AppealListRequest struct {
-	StudentID string `json:"student_id" form:"student_id"`
+	StudentID    string `json:"student_id" form:"student_id"`
+	CounsellorID string `json:"counsellor_id" form:"counsellor_id"`
+	Tag          uint   `json:"tag" form:"tag"` //1 查询当前用户的请假条 其他的话就查询counsellorid
 }
 
 type ListReply struct {
@@ -66,4 +68,10 @@ type ComplainPassReqest struct {
 	SupervisorID string `json:"supervisor_id" form:"supervisor_id"`
 	University   string `json:"university" form:"university"`
 	Pass         uint   `json:"pass" form:"pass"`
+}
+
+type AppealPassRequest struct {
+	CourseMain int64 `json:"course_main" form:"course_main"`
+	Aid        int64 `json:"aid" form:"aid"`
+	Pass       uint  `json:"pass" form:"pass"`
 }

@@ -13,6 +13,7 @@ import (
 )
 
 type (
+	AttRequest   = mq.AttRequest
 	LeaveRequest = mq.LeaveRequest
 	Request      = mq.Request
 	Response     = mq.Response
@@ -20,6 +21,7 @@ type (
 	Mq interface {
 		Publish(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 		PublishLeave(ctx context.Context, in *LeaveRequest, opts ...grpc.CallOption) (*Response, error)
+		PublishPull(ctx context.Context, in *AttRequest, opts ...grpc.CallOption) (*Response, error)
 	}
 
 	defaultMq struct {
@@ -41,4 +43,9 @@ func (m *defaultMq) Publish(ctx context.Context, in *Request, opts ...grpc.CallO
 func (m *defaultMq) PublishLeave(ctx context.Context, in *LeaveRequest, opts ...grpc.CallOption) (*Response, error) {
 	client := mq.NewMqClient(m.cli.Conn())
 	return client.PublishLeave(ctx, in, opts...)
+}
+
+func (m *defaultMq) PublishPull(ctx context.Context, in *AttRequest, opts ...grpc.CallOption) (*Response, error) {
+	client := mq.NewMqClient(m.cli.Conn())
+	return client.PublishPull(ctx, in, opts...)
 }

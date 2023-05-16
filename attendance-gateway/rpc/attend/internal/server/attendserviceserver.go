@@ -6,9 +6,9 @@ package server
 import (
 	"context"
 
-	"attendance-gateway/rpc/attend/attendservice"
-	"attendance-gateway/rpc/attend/internal/logic"
-	"attendance-gateway/rpc/attend/internal/svc"
+	"attend/attendservice"
+	"attend/internal/logic"
+	"attend/internal/svc"
 )
 
 type AttendserviceServer struct {
@@ -25,4 +25,20 @@ func NewAttendserviceServer(svcCtx *svc.ServiceContext) *AttendserviceServer {
 func (s *AttendserviceServer) PullAttendance(ctx context.Context, in *attendservice.PullAttRequest) (*attendservice.AttResponse, error) {
 	l := logic.NewPullAttendanceLogic(ctx, s.svcCtx)
 	return l.PullAttendance(in)
+}
+
+func (s *AttendserviceServer) NormalAttend(ctx context.Context, in *attendservice.NormalReqest) (*attendservice.AttNorResponse, error) {
+	l := logic.NewNormalAttendLogic(ctx, s.svcCtx)
+	return l.NormalAttend(in)
+}
+
+// 传入stuid courseid university
+func (s *AttendserviceServer) AttMember(ctx context.Context, in *attendservice.NormalReqest) (*attendservice.AttResponse, error) {
+	l := logic.NewAttMemberLogic(ctx, s.svcCtx)
+	return l.AttMember(in)
+}
+
+func (s *AttendserviceServer) LocationAttend(ctx context.Context, in *attendservice.LocationAttRequest) (*attendservice.AttResponse, error) {
+	l := logic.NewLocationAttendLogic(ctx, s.svcCtx)
+	return l.LocationAttend(in)
 }

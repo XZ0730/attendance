@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"mq_server/internal/config"
 	"time"
 
@@ -48,9 +49,31 @@ func Init(c *config.Config) *gorm.DB {
 		Policy:   dbresolver.RandomPolicy{},
 	}))
 	DB = db
+	Migrate(db)
 	return db
 }
+func Migrate(DB *gorm.DB) {
+	err := DB.Set(`gorm:table_options`, "charset=utf8mb4").
+		AutoMigrate(&AttendTable{})
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+}
 
+type Result struct {
+	Code        string
+	StudentName string
+	CourseId    string
+	Week        uint
+	MissAttend  bool
+}
+type Course struct {
+	Id          int64
+	University  string
+	TeacherName string
+	Name        string
+}
 type LeaveTable struct {
 	gorm.Model
 	//学生信息

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"appeal/appeal"
+	"appeal/common/errorx"
 	"appeal/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -33,15 +34,15 @@ func (l *GetComplainTablesLogic) GetComplainTables(in *appeal.ComplainGetRequest
 		Find(&cts).Error
 	if err != nil {
 		return &appeal.ComplainResponse{
-			Status:  40013,
-			Message: "记录查询失败",
+			Status:  errorx.RecordGetError,
+			Message: errorx.GetERROR(errorx.RecordGetError),
 			Error:   err.Error(),
 		}, err
 	}
 	return &appeal.ComplainResponse{
-		Status:       200,
+		Status:       errorx.SUCCESS,
 		ComplainList: cts,
 		Total:        uint32(len(cts)),
-		Message:      "successful",
+		Message:      errorx.GetERROR(errorx.SUCCESS),
 	}, nil
 }

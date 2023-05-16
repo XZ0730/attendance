@@ -5,8 +5,8 @@ option go_package="./attendservice";
 
 message PullAttRequest {
   string SupervisorID = 1;
-  float Longitude = 2;
-  float Latitude = 3;
+  double Longitude = 2;
+  double Latitude = 3;
   string CourseID = 4;
 }
 
@@ -15,7 +15,40 @@ message AttResponse {
   string Message = 2;
   string Error = 3;
 }
+message NormalReqest{
 
+  string University= 1;
+  string CourseId= 2;
+  string StudentId= 3;
+  int64 CourseMain= 4;
+
+}
+message CourseMember {
+  string Code       = 1;
+	string StudentName = 2;
+	string University  = 3;
+	string CourseId   = 4;
+	uint32 Week  = 5;
+  uint32 	MissAttend   = 6;
+}
+message AttNorResponse {
+  uint32 Status = 1;
+  repeated CourseMember CourseMember = 2;
+  uint32 total =3;
+  string Message = 4;
+  string Error = 5;
+}
+message LocationAttRequest{
+  string StudentId= 1;
+  double Longitude = 2;
+  double Latitude = 3;
+  string SupervisorId= 4;
+  string CouseMain= 5;
+}
 service Attendservice {
   rpc PullAttendance(PullAttRequest) returns(AttResponse);
+  rpc NormalAttend(NormalReqest)returns(AttNorResponse);
+  //传入stuid courseid university 
+  rpc AttMember(NormalReqest)returns(AttResponse);
+  rpc LocationAttend(LocationAttRequest)returns(AttResponse);
 }

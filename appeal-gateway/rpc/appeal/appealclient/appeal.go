@@ -16,6 +16,7 @@ type (
 	AppealListReply     = appeal.AppealListReply
 	AppealListRequset   = appeal.AppealListRequset
 	AppealModel         = appeal.AppealModel
+	AppealPassRequest   = appeal.AppealPassRequest
 	AppealRequest       = appeal.AppealRequest
 	AppealResponse      = appeal.AppealResponse
 	ComplainGetRequest  = appeal.ComplainGetRequest
@@ -30,6 +31,7 @@ type (
 		ComplainToSupervisor(ctx context.Context, in *ComplainRequest, opts ...grpc.CallOption) (*ComplainResponse, error)
 		GetComplainTables(ctx context.Context, in *ComplainGetRequest, opts ...grpc.CallOption) (*ComplainResponse, error)
 		PassComplainTables(ctx context.Context, in *ComplainPassRequest, opts ...grpc.CallOption) (*AppealResponse, error)
+		PassAppealTables(ctx context.Context, in *AppealPassRequest, opts ...grpc.CallOption) (*AppealResponse, error)
 	}
 
 	defaultAppeal struct {
@@ -66,4 +68,9 @@ func (m *defaultAppeal) GetComplainTables(ctx context.Context, in *ComplainGetRe
 func (m *defaultAppeal) PassComplainTables(ctx context.Context, in *ComplainPassRequest, opts ...grpc.CallOption) (*AppealResponse, error) {
 	client := appeal.NewAppealClient(m.cli.Conn())
 	return client.PassComplainTables(ctx, in, opts...)
+}
+
+func (m *defaultAppeal) PassAppealTables(ctx context.Context, in *AppealPassRequest, opts ...grpc.CallOption) (*AppealResponse, error) {
+	client := appeal.NewAppealClient(m.cli.Conn())
+	return client.PassAppealTables(ctx, in, opts...)
 }

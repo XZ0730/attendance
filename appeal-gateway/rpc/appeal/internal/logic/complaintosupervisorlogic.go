@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"appeal/appeal"
+	"appeal/common/errorx"
 	"appeal/internal/svc"
 	"appeal/model"
 
@@ -36,8 +37,8 @@ func (l *ComplainToSupervisorLogic) ComplainToSupervisor(in *appeal.ComplainRequ
 		First(&stu).Error
 	if err != nil {
 		return &appeal.ComplainResponse{
-			Status:  40001,
-			Message: "当前用户不存在",
+			Status:  errorx.RoleISNOEXIST,
+			Message: errorx.GetERROR(errorx.RoleISNOEXIST),
 		}, nil
 	}
 	ct := &model.ComplainTable{
@@ -53,8 +54,8 @@ func (l *ComplainToSupervisorLogic) ComplainToSupervisor(in *appeal.ComplainRequ
 		First(&stu1).Error
 	if err != nil {
 		return &appeal.ComplainResponse{
-			Status:  40002,
-			Message: "投诉的督导员不存在",
+			Status:  errorx.RoleISNOEXIST,
+			Message: errorx.GetERROR(errorx.RoleISNOEXIST),
 		}, nil
 	}
 	fmt.Println("stu1", stu1)
@@ -69,8 +70,9 @@ func (l *ComplainToSupervisorLogic) ComplainToSupervisor(in *appeal.ComplainRequ
 		First(&stu2).Error
 	if err != nil {
 		return &appeal.ComplainResponse{
-			Status:  40003,
-			Message: "辅导员不存在",
+			Status:  errorx.RoleISNOEXIST,
+			Message: errorx.GetERROR(errorx.RoleISNOEXIST),
+			Error:   err.Error(),
 		}, nil
 	}
 	ct.CounsellorName = stu2.Name
@@ -80,13 +82,13 @@ func (l *ComplainToSupervisorLogic) ComplainToSupervisor(in *appeal.ComplainRequ
 	err2 := l.svcCtx.MysqlDB.Model(&model.ComplainTable{}).Create(&ct).Error
 	if err2 != nil {
 		return &appeal.ComplainResponse{
-			Status:  40033,
-			Message: "投诉发送失败",
+			Status:  errorx.ComplainPostError,
+			Message: errorx.GetERROR(errorx.ComplainPostError),
 			Error:   err2.Error(),
 		}, err2
 	}
 	return &appeal.ComplainResponse{
-		Status:  200,
-		Message: "successful",
+		Status:  errorx.SUCCESS,
+		Message: errorx.GetERROR(errorx.SUCCESS),
 	}, nil
 }

@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	Mq_Publish_FullMethodName      = "/mq.Mq/Publish"
 	Mq_PublishLeave_FullMethodName = "/mq.Mq/PublishLeave"
+	Mq_PublishPull_FullMethodName  = "/mq.Mq/PublishPull"
 )
 
 // MqClient is the client API for Mq service.
@@ -29,6 +30,7 @@ const (
 type MqClient interface {
 	Publish(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 	PublishLeave(ctx context.Context, in *LeaveRequest, opts ...grpc.CallOption) (*Response, error)
+	PublishPull(ctx context.Context, in *AttRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
 type mqClient struct {
@@ -57,12 +59,22 @@ func (c *mqClient) PublishLeave(ctx context.Context, in *LeaveRequest, opts ...g
 	return out, nil
 }
 
+func (c *mqClient) PublishPull(ctx context.Context, in *AttRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, Mq_PublishPull_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MqServer is the server API for Mq service.
 // All implementations must embed UnimplementedMqServer
 // for forward compatibility
 type MqServer interface {
 	Publish(context.Context, *Request) (*Response, error)
 	PublishLeave(context.Context, *LeaveRequest) (*Response, error)
+	PublishPull(context.Context, *AttRequest) (*Response, error)
 	mustEmbedUnimplementedMqServer()
 }
 
@@ -75,6 +87,9 @@ func (UnimplementedMqServer) Publish(context.Context, *Request) (*Response, erro
 }
 func (UnimplementedMqServer) PublishLeave(context.Context, *LeaveRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublishLeave not implemented")
+}
+func (UnimplementedMqServer) PublishPull(context.Context, *AttRequest) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PublishPull not implemented")
 }
 func (UnimplementedMqServer) mustEmbedUnimplementedMqServer() {}
 
@@ -125,6 +140,24 @@ func _Mq_PublishLeave_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Mq_PublishPull_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MqServer).PublishPull(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Mq_PublishPull_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MqServer).PublishPull(ctx, req.(*AttRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Mq_ServiceDesc is the grpc.ServiceDesc for Mq service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +172,10 @@ var Mq_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PublishLeave",
 			Handler:    _Mq_PublishLeave_Handler,
+		},
+		{
+			MethodName: "PublishPull",
+			Handler:    _Mq_PublishPull_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

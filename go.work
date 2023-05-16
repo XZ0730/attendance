@@ -5,4 +5,5 @@ use (
 	./appeal-gateway/rpc/appeal
 	./appeal-gateway/rpc/mq_server
 	./attendance-gateway
+	./attendance-gateway/rpc/attend
 )

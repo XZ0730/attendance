@@ -34,9 +34,12 @@ message AppealModel{
   int32 LeaveCourseTo = 11;
   uint32 TagAs = 12;
   uint32 IsAudit = 13;
+  uint64 Id = 14;
 }
 message AppealListRequset{
   string StudentID = 1;
+  string CounsellorID = 2;
+  uint32 Tag = 3;
 }
 message AppealListReply {
   uint32  Status = 1;
@@ -100,6 +103,11 @@ message ComplainPassRequest {
   bool Pass = 5;
   //pass由query传入
 }
+message AppealPassRequest{
+  uint64 Aid= 1;
+  int64 CourseMain=2;
+  bool Pass = 3;
+}
 service Appeal {
   rpc StudentAskforLeave(AppealRequest) returns (AppealResponse);
   rpc GetAppealListBySid(AppealListRequset)returns(AppealListReply);
@@ -109,5 +117,6 @@ service Appeal {
 
   rpc PassComplainTables(ComplainPassRequest)returns(AppealResponse);
   
+  rpc PassAppealTables(AppealPassRequest)returns(AppealResponse);
   // rpc PassComplainTables()
 }
