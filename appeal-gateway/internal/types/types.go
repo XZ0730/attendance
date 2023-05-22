@@ -75,3 +75,10 @@ type AppealPassRequest struct {
 	Aid        int64 `json:"aid" form:"aid"`
 	Pass       uint  `json:"pass" form:"pass"`
 }
+
+type HelloRequest struct {
+}
+
+type HelloResponse struct {
+	Message string `json:"message"`
+}

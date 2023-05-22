@@ -27,6 +27,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/sup/location",
 				Handler: LocationAttendHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/sup/attlist",
+				Handler: GetAttListByCourseHandler(serverCtx),
+			},
 		},
 	)
 }

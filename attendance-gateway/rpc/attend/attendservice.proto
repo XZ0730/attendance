@@ -45,10 +45,15 @@ message LocationAttRequest{
   string SupervisorId= 4;
   string CouseMain= 5;
 }
+message GetAttListByCourseReq{
+  uint64 CourseMain= 1;
+  uint32 Week = 2;
+}
 service Attendservice {
   rpc PullAttendance(PullAttRequest) returns(AttResponse);
   rpc NormalAttend(NormalReqest)returns(AttNorResponse);
   //传入stuid courseid university 
   rpc AttMember(NormalReqest)returns(AttResponse);
   rpc LocationAttend(LocationAttRequest)returns(AttResponse);
-}
+  rpc GetAttendListByCourse(GetAttListByCourseReq)returns(AttNorResponse);
+}//goctl rpc protoc attendservice.proto --go_out=. --go-grpc_out=. --zrpc_out=.

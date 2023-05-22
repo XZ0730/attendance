@@ -32,11 +32,12 @@ type AttResponse {
 	Error   string      `json:"error"`
 }
 type NormalAttReq {
-	CourseID   string `json:"course_id"`
-	StudentID  string `json:"student_id"`
-	University string `json:"university"`
-	CourseMain int64  `json:"course_main"`
-	Type       uint   `json:"type"`
+	CourseID     string `json:"course_id"`
+	SupervisroID string `json:"supervisor_id"`
+	StudentID    string `json:"student_id"`
+	University   string `json:"university"`
+	CourseMain   int64  `json:"course_main"`
+	Type         uint   `json:"type"`
 }
 type LocationAttReq {
 	StudentID    string  `json:"student_id"`
@@ -44,6 +45,10 @@ type LocationAttReq {
 	SupervisorID string  `json:"supervisor_id"`
 	Longitude    float64 `json:"longitude"`
 	Latitude     float64 `json:"latitude"`
+}
+type GetAttListByCourseReq {
+	CourseMain uint64 `json:"course_main" form:"course_main"`
+	Week       uint32 `json:"week" form:"week"`
 }
 service attendance-api {
 	//@handler GetUser // TODO: set handler name and delete this comment
@@ -57,4 +62,7 @@ service attendance-api {
 	
 	@handler LocationAttend
 	post /sup/location(LocationAttReq)returns(AttResponse)
+	
+	@handler GetAttListByCourse
+	post /sup/attlist(GetAttListByCourseReq)returns(AttResponse)
 }

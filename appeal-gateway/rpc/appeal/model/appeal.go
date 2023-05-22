@@ -37,7 +37,7 @@ type Result struct {
 	StudentName string
 	CourseId    string
 	Week        uint
-	MissAttend  bool
+	MissAttend  uint
 }
 type AttendTable struct {
 	gorm.Model

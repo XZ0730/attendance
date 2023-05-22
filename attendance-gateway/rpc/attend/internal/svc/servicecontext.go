@@ -16,6 +16,7 @@ type ServiceContext struct {
 	RDB4   *redis.Client
 	RDB3   *redis.Client
 	RDB5   *redis.Client
+	RDB6   *redis.Client
 	DB     *gorm.DB
 	MQ     mqclient.Mq
 }
@@ -27,6 +28,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RDB3:   model.InitRedis3(&c),
 		RDB4:   model.InitRedis4(&c),
 		RDB5:   model.InitRedis5(&c),
+		RDB6:   model.InitRedis6(&c),
 		DB:     model.Init(&c),
 		MQ:     mqclient.NewMq(zrpc.MustNewClient(c.MqCli)),
 	}

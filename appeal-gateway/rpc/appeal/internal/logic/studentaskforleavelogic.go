@@ -227,7 +227,8 @@ func (l *StudentAskforLeaveLogic) StudentAskforLeave(in *appeal.AppealRequest) (
 		LeaveCourseFrom: int(in.GetLeaveCourseFrom()),
 		LeaveCourseTo:   int(in.GetLeaveCourseTo()),
 		//申诉表-请假条区分
-		TagAs: uint(in.GetTagAs()),
+		TagAs:   uint(in.GetTagAs()),
+		IsAudit: 1,
 	}
 	//这边--等待mq模块完成--放入mq中，然后返回完成，后续交给mq去处理
 	// tx := l.svcCtx.MysqlDB.Begin(&sql.TxOptions{//开启事务

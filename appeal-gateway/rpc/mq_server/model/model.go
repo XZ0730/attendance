@@ -66,7 +66,7 @@ type Result struct {
 	StudentName string
 	CourseId    string
 	Week        uint
-	MissAttend  bool
+	MissAttend  uint
 }
 type Course struct {
 	Id          int64

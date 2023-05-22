@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Attendservice_PullAttendance_FullMethodName = "/attendservice.Attendservice/PullAttendance"
-	Attendservice_NormalAttend_FullMethodName   = "/attendservice.Attendservice/NormalAttend"
-	Attendservice_AttMember_FullMethodName      = "/attendservice.Attendservice/AttMember"
-	Attendservice_LocationAttend_FullMethodName = "/attendservice.Attendservice/LocationAttend"
+	Attendservice_PullAttendance_FullMethodName        = "/attendservice.Attendservice/PullAttendance"
+	Attendservice_NormalAttend_FullMethodName          = "/attendservice.Attendservice/NormalAttend"
+	Attendservice_AttMember_FullMethodName             = "/attendservice.Attendservice/AttMember"
+	Attendservice_LocationAttend_FullMethodName        = "/attendservice.Attendservice/LocationAttend"
+	Attendservice_GetAttendListByCourse_FullMethodName = "/attendservice.Attendservice/GetAttendListByCourse"
 )
 
 // AttendserviceClient is the client API for Attendservice service.
@@ -34,6 +35,7 @@ type AttendserviceClient interface {
 	// 传入stuid courseid university
 	AttMember(ctx context.Context, in *NormalReqest, opts ...grpc.CallOption) (*AttResponse, error)
 	LocationAttend(ctx context.Context, in *LocationAttRequest, opts ...grpc.CallOption) (*AttResponse, error)
+	GetAttendListByCourse(ctx context.Context, in *GetAttListByCourseReq, opts ...grpc.CallOption) (*AttNorResponse, error)
 }
 
 type attendserviceClient struct {
@@ -80,6 +82,15 @@ func (c *attendserviceClient) LocationAttend(ctx context.Context, in *LocationAt
 	return out, nil
 }
 
+func (c *attendserviceClient) GetAttendListByCourse(ctx context.Context, in *GetAttListByCourseReq, opts ...grpc.CallOption) (*AttNorResponse, error) {
+	out := new(AttNorResponse)
+	err := c.cc.Invoke(ctx, Attendservice_GetAttendListByCourse_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AttendserviceServer is the server API for Attendservice service.
 // All implementations must embed UnimplementedAttendserviceServer
 // for forward compatibility
@@ -89,6 +100,7 @@ type AttendserviceServer interface {
 	// 传入stuid courseid university
 	AttMember(context.Context, *NormalReqest) (*AttResponse, error)
 	LocationAttend(context.Context, *LocationAttRequest) (*AttResponse, error)
+	GetAttendListByCourse(context.Context, *GetAttListByCourseReq) (*AttNorResponse, error)
 	mustEmbedUnimplementedAttendserviceServer()
 }
 
@@ -107,6 +119,9 @@ func (UnimplementedAttendserviceServer) AttMember(context.Context, *NormalReqest
 }
 func (UnimplementedAttendserviceServer) LocationAttend(context.Context, *LocationAttRequest) (*AttResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LocationAttend not implemented")
+}
+func (UnimplementedAttendserviceServer) GetAttendListByCourse(context.Context, *GetAttListByCourseReq) (*AttNorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAttendListByCourse not implemented")
 }
 func (UnimplementedAttendserviceServer) mustEmbedUnimplementedAttendserviceServer() {}
 
@@ -193,6 +208,24 @@ func _Attendservice_LocationAttend_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Attendservice_GetAttendListByCourse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAttListByCourseReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttendserviceServer).GetAttendListByCourse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Attendservice_GetAttendListByCourse_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttendserviceServer).GetAttendListByCourse(ctx, req.(*GetAttListByCourseReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Attendservice_ServiceDesc is the grpc.ServiceDesc for Attendservice service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -215,6 +248,10 @@ var Attendservice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LocationAttend",
 			Handler:    _Attendservice_LocationAttend_Handler,
+		},
+		{
+			MethodName: "GetAttendListByCourse",
+			Handler:    _Attendservice_GetAttendListByCourse_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -42,6 +42,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/stu/appeal",
 				Handler: PassAppealTableHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/hello",
+				Handler: HelloHandler(serverCtx),
+			},
 		},
 	)
 }

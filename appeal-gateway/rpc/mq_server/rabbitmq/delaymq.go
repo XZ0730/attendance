@@ -155,7 +155,7 @@ func (*DelayMQ) unRegisterAtt(msg <-chan amqp.Delivery) {
 		}
 		stu := make([]*model.LeaveTable, 0)
 		model.DB.Table("leave_table").
-			Where("course_id=? AND is_audit=1 AND tag_as=1 AND leave_course_from<=? AND leave_course_to >=? AND school_name=?", mp.CourseID, weekto+1, weekto+1, mp.University).
+			Where("course_id=? AND is_audit=3 AND tag_as=1 AND leave_course_from<=? AND leave_course_to >=? AND school_name=?", mp.CourseID, weekto+1, weekto+1, mp.University).
 			Find(&stu)
 		for _, s := range stu { //将请假的同学考勤状态设置为1
 			model.RDB5.ZAdd(model.RDB5.Context(), strconv.Itoa(int(cr.Id)), &redis.Z{
@@ -186,7 +186,7 @@ func (*DelayMQ) unRegisterAtt(msg <-chan amqp.Delivery) {
 		id := ""
 		cnt := 0
 		for _, v := range stuid {
-			stus[v].MissAttend = true
+			stus[v].MissAttend = 1
 			if cnt < len(stuid)-1 {
 				temp := stus[v].StudentName + ","
 				name += temp
@@ -214,8 +214,8 @@ func (*DelayMQ) unRegisterAtt(msg <-chan amqp.Delivery) {
 					sid := strings.Split(att.UnpresenterID, ",")
 					for _, v := range sid {
 						//两次考勤进行合并
-						if stus[v].MissAttend == false {
-							stus[v].MissAttend = true
+						if stus[v].MissAttend == 2 {
+							stus[v].MissAttend = 1
 							name = name + "," + stus[v].StudentName
 							id = id + "," + stus[v].Code
 						}

@@ -42,3 +42,8 @@ func (s *AttendserviceServer) LocationAttend(ctx context.Context, in *attendserv
 	l := logic.NewLocationAttendLogic(ctx, s.svcCtx)
 	return l.LocationAttend(in)
 }
+
+func (s *AttendserviceServer) GetAttendListByCourse(ctx context.Context, in *attendservice.GetAttListByCourseReq) (*attendservice.AttNorResponse, error) {
+	l := logic.NewGetAttendListByCourseLogic(ctx, s.svcCtx)
+	return l.GetAttendListByCourse(in)
+}

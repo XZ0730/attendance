@@ -17,11 +17,12 @@ type AttResponse struct {
 }
 
 type NormalAttReq struct {
-	CourseID   string `json:"course_id"`
-	StudentID  string `json:"student_id"`
-	University string `json:"university"`
-	CourseMain int64  `json:"course_main"`
-	Type       uint   `json:"type"`
+	CourseID     string `json:"course_id"`
+	SupervisroID string `json:"supervisor_id"`
+	StudentID    string `json:"student_id"`
+	University   string `json:"university"`
+	CourseMain   int64  `json:"course_main"`
+	Type         uint   `json:"type"`
 }
 
 type LocationAttReq struct {
@@ -30,4 +31,9 @@ type LocationAttReq struct {
 	SupervisorID string  `json:"supervisor_id"`
 	Longitude    float64 `json:"longitude"`
 	Latitude     float64 `json:"latitude"`
+}
+
+type GetAttListByCourseReq struct {
+	CourseMain uint64 `json:"course_main" form:"course_main"`
+	Week       uint32 `json:"week" form:"week"`
 }

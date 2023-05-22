@@ -38,6 +38,7 @@ func (l *PassAppealTablesLogic) PassAppealTables(in *appeal.AppealPassRequest) (
 	//请假条--->查看假条周是否点名-->没点名就直接改状态-->
 	//点名了和申诉表一起处理-->将redis中的考勤信息进行映射出来
 	//更改当前假条或者申诉表的学号的考勤信息，更改mysql中的缺勤信息
+	// l.Logger.Info()
 	lt := &model.LeaveTable{}
 	err2 := l.svcCtx.MysqlDB.Table("leave_table").Where("id=? AND is_audit!=3", in.GetAid()).First(&lt).Error
 	if err2 != nil {
@@ -84,31 +85,40 @@ func (l *PassAppealTablesLogic) PassAppealTables(in *appeal.AppealPassRequest) (
 		status, err := l.svcCtx.RDB7.HGet(l.ctx, strconv.Itoa(int(in.GetCourseMain())), strconv.Itoa(int(i))).Result()
 		//课程该周未点名
 		if err != nil || status == "0" {
-			err2 := l.svcCtx.MysqlDB.Table("leave_table").Where("id=?", in.GetAid()).UpdateColumn("is_audit", 3).Error
-			if err2 != nil {
-				return &appeal.AppealResponse{
-					Status:  38989,
-					Message: "假条审核失败",
-					Error:   err2.Error(),
-				}, nil
-			}
+			//没点名就直接下一周
 			continue
-		} else if in.GetPass() {
+		}
+		if in.GetPass() {
 			fmt.Println("测试")
 			info, err2 := l.svcCtx.RDB6.HGet(l.ctx, strconv.Itoa(int(in.GetCourseMain())), strconv.Itoa(int(i))).Result()
 			if err2 != nil {
 				fmt.Println("err2:", err2.Error())
 				continue
 			}
-			json.Unmarshal([]byte(info), &attendMap)
+			err3 := json.Unmarshal([]byte(info), &attendMap)
+			if err3 != nil {
+				fmt.Println("err3:", err3)
+			}
 			fmt.Println("attendMap:", attendMap)
-			if attendMap[lt.StudentID].MissAttend == false {
+			_, ok := attendMap[lt.StudentID]
+			if !ok {
+				_ = l.svcCtx.MysqlDB.Table("leave_table").Where("id=?", in.GetAid()).UpdateColumn("is_audit", 3).Error
+				fmt.Println("err:该学生不属于该课程")
+				return &appeal.AppealResponse{
+					Status:  38999,
+					Message: "该学生不属于该课程,假条自动回绝",
+				}, nil
+			}
+			if attendMap[lt.StudentID].MissAttend == 2 {
+				fmt.Println("测试3")
 				continue
 			} else {
 				//修改mysql中的值
+				fmt.Println("测试4")
 				att := &model.AttendTable{}
+				fmt.Println("测试5")
 				tx := l.svcCtx.MysqlDB.Begin()
-				fmt.Println("测试111")
+				fmt.Println("测试1")
 				err := tx.Table("attend_table").
 					Where("university=? AND course_id=? AND week=?", lt.SchoolName, lt.CourseID, i).First(&att).Error
 				if err != nil {
@@ -119,6 +129,7 @@ func (l *PassAppealTablesLogic) PassAppealTables(in *appeal.AppealPassRequest) (
 						Error:   err2.Error(),
 					}, nil
 				}
+				fmt.Println("测试2")
 				unpresenters := strings.Split(att.Unpresenter, ",")
 				unpresenterID := strings.Split(att.UnpresenterID, ",")
 				for j := 0; j < len(unpresenterID); j++ {
@@ -153,7 +164,7 @@ func (l *PassAppealTablesLogic) PassAppealTables(in *appeal.AppealPassRequest) (
 				tx.Commit()
 				//
 				//
-				attendMap[lt.StudentID].MissAttend = false
+				attendMap[lt.StudentID].MissAttend = 2
 				attInfo, _ := json.Marshal(attendMap)
 				l.svcCtx.RDB6.HSet(l.ctx, strconv.Itoa(int(in.GetCourseMain())), strconv.Itoa(int(i)), string(attInfo))
 			}
@@ -167,10 +178,21 @@ func (l *PassAppealTablesLogic) PassAppealTables(in *appeal.AppealPassRequest) (
 					Error:   err2.Error(),
 				}, nil
 			}
+			return &appeal.AppealResponse{
+				Status:  errorx.SUCCESS,
+				Message: errorx.GetERROR(errorx.SUCCESS),
+			}, nil
 		}
 
 	}
-
+	err2 = l.svcCtx.MysqlDB.Table("leave_table").Where("id=?", in.GetAid()).UpdateColumn("is_audit", 2).Error
+	if err2 != nil {
+		return &appeal.AppealResponse{
+			Status:  38989,
+			Message: "假条审核失败",
+			Error:   err2.Error(),
+		}, nil
+	}
 	return &appeal.AppealResponse{
 		Status:  errorx.SUCCESS,
 		Message: errorx.GetERROR(errorx.SUCCESS),

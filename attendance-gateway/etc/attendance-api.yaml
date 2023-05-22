@@ -1,6 +1,8 @@
 Name: attendance-api
 Host: 0.0.0.0
 Port: 8889
+Log:
+  Mode: file
 AttendCli:
   Etcd:
     Hosts:
@@ -8,6 +10,10 @@ AttendCli:
     Key: attendservice.rpc
 Telemetry:
   Name: attendance-api
-  Endpoint: http://172.17.0.8:14268/api/traces
+  Endpoint: http://172.17.0.5:14268/api/traces
   Sampler: 1.0
   Batcher: jaeger
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9091
+  Path: /metrics

@@ -26,6 +26,7 @@ func NewGetAppealListBySidLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 
 func (l *GetAppealListBySidLogic) GetAppealListBySid(req *types.AppealListRequest) (resp *types.ListReply, err error) {
 	// todo: add your logic here and delete this line
+	l.Logger.Debug("hello logx")
 	res, err := l.svcCtx.Appealer.GetAppealListBySid(l.ctx, &appeal.AppealListRequset{
 		StudentID:    req.StudentID,
 		Tag:          uint32(req.Tag),

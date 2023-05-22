@@ -14,6 +14,10 @@ MqCli:
     Key: mq.rpc
 Telemetry:
   Name: appealservice.rpc
-  Endpoint: http://172.17.0.8:14268/api/traces
+  Endpoint: http://172.17.0.5:14268/api/traces
   Sampler: 1.0
   Batcher: jaeger
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9091
+  Path: /metrics

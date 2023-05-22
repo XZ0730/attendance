@@ -33,7 +33,8 @@ func main() {
 		}
 	})
 	defer s.Stop()
-
+	// logx.NewWriter()
+	// logx.SetWriter()
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }

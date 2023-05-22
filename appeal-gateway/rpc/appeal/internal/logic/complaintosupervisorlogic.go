@@ -66,7 +66,7 @@ func (l *ComplainToSupervisorLogic) ComplainToSupervisor(in *appeal.ComplainRequ
 	ct.SchoolName = stu1.University
 	stu2 := &model.Character{}
 	err = l.svcCtx.MysqlDB.Table("character_msg").
-		Where("code=? AND name=? AND role=?", in.GetCounsellorID(), in.GetCounsellorName(), 3).
+		Where("code=? AND name=? AND role=?", in.GetCounsellorID(), in.GetCounsellorName(), 4).
 		First(&stu2).Error
 	if err != nil {
 		return &appeal.ComplainResponse{

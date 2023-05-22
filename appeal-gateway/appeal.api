@@ -85,6 +85,11 @@ type AppealPassRequest {
 	Aid        int64 `json:"aid" form:"aid"`
 	Pass       uint  `json:"pass" form:"pass"`
 }
+type HelloRequest {
+}
+type HelloResponse {
+	Message string `json:"message"`
+}
 service appeal-api {
 	@handler StudentAskforLeave // TODO: set handler name and delete this comment
 	post /appealLeave(AppealRequest) returns(AppealResponse)
@@ -103,4 +108,7 @@ service appeal-api {
 	
 	@handler PassAppealTable
 	post /stu/appeal(AppealPassRequest) returns(AppealResponse)
+	
+	@handler Hello
+	get /hello(HelloRequest) returns(HelloResponse)
 }

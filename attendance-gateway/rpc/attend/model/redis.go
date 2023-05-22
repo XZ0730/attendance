@@ -8,6 +8,7 @@ import (
 
 var RDB5 *redis.Client
 var RDB *redis.Client
+var RDB6 *redis.Client
 
 func InitRedis(c *config.Config) *redis.Client {
 	RDB = redis.NewClient(&redis.Options{
@@ -38,4 +39,12 @@ func InitRedis5(c *config.Config) *redis.Client {
 		DB:       5,        // use default DB
 	})
 	return RDB5
+}
+func InitRedis6(c *config.Config) *redis.Client {
+	RDB6 = redis.NewClient(&redis.Options{
+		Addr:     c.Addr,
+		Password: "147258", // no password set
+		DB:       6,        // use default DB
+	})
+	return RDB6
 }

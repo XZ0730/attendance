@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"attendance-gateway/internal/errorx"
 	"attendance-gateway/internal/logic"
 	"attendance-gateway/internal/model"
 	"attendance-gateway/internal/svc"
 	"attendance-gateway/internal/types"
-	"errors"
 	"net/http"
 	"time"
 
@@ -21,11 +21,19 @@ func NormalAttendHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			},
 		}).Upgrade(w, r, nil) //ws升级
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(r.Context(), w, errorx.NewCodeError(10002, err.Error()))
 		}
+		v := r.URL.Query()
 		var req types.NormalAttReq
+		req.SupervisroID = v.Get("supervisor_id")
+		req.CourseID = v.Get("course_id")
+		req.University = v.Get("university")
+		req.StudentID = v.Get("student_id")
+		if req.CourseID == "" || req.University == "" || req.StudentID == "" || req.SupervisroID == "" {
+			httpx.ErrorCtx(r.Context(), w, errorx.NewCodeError(10004, "参数为空"))
+		}
 		cli := &model.Client{
-			ID:        "1",
+			ID:        req.SupervisroID,
 			Socket:    conn,
 			HeartBeat: time.Now().Unix(),
 			Done:      make(chan struct{}),
@@ -34,18 +42,11 @@ func NormalAttendHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		model.Manager.Register <- cli
 		go cli.Readmsg(&req, svcCtx)
 
-		v := r.URL.Query()
-		req.CourseID = v.Get("course_id")
-		req.University = v.Get("university")
-		req.StudentID = v.Get("student_id")
-		if req.CourseID == "" || req.University == "" || req.StudentID == "" {
-			httpx.ErrorCtx(r.Context(), w, errors.New("参数为空"))
-		}
 		go cli.Writemsg(&req, svcCtx)
 		l := logic.NewNormalAttendLogic(r.Context(), svcCtx)
 		resp, err := l.NormalAttend(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(r.Context(), w, errorx.NewCodeError(int(resp.Status), err.Error()))
 		} else {
 			httpx.OkJsonCtx(r.Context(), w, resp)
 		}
