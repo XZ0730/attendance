@@ -1,0 +1,47 @@
+syntax = "v1"
+
+info (
+	title: // TODO: add title
+	desc: // TODO: add description
+	author: "张鑫"
+	email: "1055275260@qq.com"
+)
+
+type CourseInfoRequest {
+	// TODO: add members here and delete this comment
+	University  string `json:"university"`
+	Course_id   string `json:"course_id"`
+	Course_main uint32 `json:"course_main"`
+}
+
+type CourseInfoResponse {
+	// TODO: add members here and delete this comment
+	Status   uint32      `json:"status"`
+	DataInfo interface{} `json:"data"`
+	Total    uint32      `json:"total"`
+	Error    string      `json:"error"`
+}
+type CounsellorInfoRequest {
+	MajorInfoList []MajorInfo `json:"major_info"`
+}
+type MajorInfo {
+	Major      string   `json:"major"`
+	University string   `json:"university"`
+	CourseMain []uint64 `json:"course_main"`
+}
+type CounsellorInfoResponse {
+	Status     uint32      `json:"status"`
+	MajorData  interface{} `json:"major_data"`
+	Total1     uint32      `json:"total1"`
+	CourseData interface{} `json:"course_data"`
+	Total2     uint32      `json:"total2"`
+	Message    string      `json:"message"`
+}
+service attendinfo-api {
+	@handler GetCourseAttInfo // TODO: set handler name and delete this comment
+	get /info/course(CourseInfoRequest) returns(CourseInfoResponse)
+	
+	@handler GetCounsellorAttInfo // TODO: set handler name and delete this comment
+	get /info/counsellor(CounsellorInfoRequest) returns(CounsellorInfoResponse)
+	
+}

@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package attendinfo;
+option go_package="./attendinfo";
+
+message CourseInfoRequest {
+  string University= 1;
+  string Courseid = 2;
+  uint32 Course_Main= 3;
+}
+
+message CourseInfoResponse {
+  uint32 Status =1;
+  string Message=2;
+  repeated CourseAttInfo CourseAttInfos =3;
+  uint32 total= 4;
+  string Error = 5;
+}
+message CourseAttInfo {//第i周的出勤率，第i周的缺勤人数
+  uint32 Week = 1;
+  double AttendRate = 2;
+  uint32 UnpresentCount= 3;
+  repeated UnpresentModel UnpresentInfos = 4;//返回缺勤人信息
+}
+message UnpresentModel{
+  string Code = 1;
+  string Name= 2;
+  uint32 MissAttend= 3;//1缺勤，2.出勤
+}
+message CounsellorAttInfoReq{
+  repeated MajorReqList MajorList = 1;
+}
+message MajorReqList{
+  string Major = 1;
+  string University = 2;
+  repeated uint64 CouseMain = 3;
+}
+message CounsellorAttInfoRsp{
+  uint32 Status = 1;
+  string Message = 2;
+  repeated MajorRate MajorRateList = 3;
+  repeated CourseRate CourseRateList = 4;//返回前十个
+  uint32 Total1 = 5;
+  uint32 Total2 = 6;
+}
+message MajorRate{
+  string Major = 1;
+  double AttendRate = 2;
+}
+message CourseRate{
+  uint64 CourseMain = 1;
+  double AttendRate= 2;
+  int32 Week = 3;
+}
+service Attendinfo {
+  rpc GetCourseAttInfo(CourseInfoRequest) returns(CourseInfoResponse);
+  rpc GetCounsellorAttInfo(CounsellorAttInfoReq) returns(CounsellorAttInfoRsp);
+}
