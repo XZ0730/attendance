@@ -37,7 +37,7 @@ func (l *PullAttendanceLogic) PullAttendance(in *attendservice.PullAttRequest) (
 	// todo: add your logic here and delete this line
 	cr := &model.Course{}
 	fmt.Println("--------------------------1---------")
-	err6 := l.svcCtx.DB.Table("course").Where("course_id=?", in.GetCourseID()).First(&cr).Error
+	err6 := l.svcCtx.DB.Table("course").Where("id=?", in.GetCourseMain()).First(&cr).Error
 	if err6 != nil {
 		return &attendservice.AttResponse{
 			Status:  errorx.RecordGetError,
@@ -100,7 +100,7 @@ func (l *PullAttendanceLogic) PullAttendance(in *attendservice.PullAttRequest) (
 		}, nil
 	}
 	fmt.Println("----------测试4----------")
-	err5 := l.svcCtx.RDB4.GeoAdd(l.ctx, in.GetCourseID(), &redis.GeoLocation{
+	err5 := l.svcCtx.RDB4.GeoAdd(l.ctx, strconv.Itoa(int(in.GetCourseMain())), &redis.GeoLocation{
 		Longitude: in.GetLongitude(),
 		Latitude:  in.GetLatitude(),
 		Name:      in.GetSupervisorID(),

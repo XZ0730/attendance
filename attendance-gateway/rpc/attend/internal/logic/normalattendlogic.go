@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	"attend/attendservice"
 	"attend/common/errorx"
@@ -44,21 +45,25 @@ func (l *NormalAttendLogic) NormalAttend(in *attendservice.NormalReqest) (*atten
 			Error:   err.Error(),
 		}, nil
 	}
-	week, err2 := model.RDB.HGet(l.ctx, in.GetUniversity(), strconv.Itoa(int(cr.Id))).Result()
-	if err2 != nil {
-		return &attendservice.AttNorResponse{
-			Status:  errorx.RedisInitError,
-			Message: errorx.GetERROR(errorx.RedisInitError),
-			Error:   err2.Error(),
-		}, nil
-	}
-	weeknow, _ := strconv.Atoi(week)
+	// week, err2 := model.RDB.HGet(l.ctx, in.GetUniversity(), strconv.Itoa(int(cr.Id))).Result()
+	// if err2 != nil {
+	// 	return &attendservice.AttNorResponse{
+	// 		Status:  errorx.RedisInitError,
+	// 		Message: errorx.GetERROR(errorx.RedisInitError),
+	// 		Error:   err2.Error(),
+	// 	}, nil
+	// }
+	now := time.Now()
+	begin := time.Date(2023, 2, 20, 0, 0, 0, 0, time.Local)
+	duration := now.Sub(begin)
+	week := duration.Hours() / 24 / 7
+	// weeknow, _ := strconv.Atoi(week)
 	for _, v := range mem {
 		if v == nil {
 			break
 		} else {
 			memMap[v.Code] = v
-			v.Week = uint32(weeknow + 1)
+			v.Week = uint32(week)
 			v.MissAttend = 1
 		}
 	}

@@ -6,6 +6,7 @@ import (
 	"attendance-gateway/internal/model"
 	"attendance-gateway/internal/svc"
 	"attendance-gateway/internal/types"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -28,8 +29,7 @@ func NormalAttendHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		req.SupervisroID = v.Get("supervisor_id")
 		req.CourseID = v.Get("course_id")
 		req.University = v.Get("university")
-		req.StudentID = v.Get("student_id")
-		if req.CourseID == "" || req.University == "" || req.StudentID == "" || req.SupervisroID == "" {
+		if req.CourseID == "" || req.University == "" || req.SupervisroID == "" {
 			httpx.ErrorCtx(r.Context(), w, errorx.NewCodeError(10004, "参数为空"))
 		}
 		cli := &model.Client{
@@ -39,10 +39,11 @@ func NormalAttendHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			Done:      make(chan struct{}),
 			Send:      make(chan []byte),
 		}
+		fmt.Println("sid:", req.SupervisroID)
 		model.Manager.Register <- cli
 		go cli.Readmsg(&req, svcCtx)
-
 		go cli.Writemsg(&req, svcCtx)
+		go cli.LinkWith()
 		l := logic.NewNormalAttendLogic(r.Context(), svcCtx)
 		resp, err := l.NormalAttend(&req)
 		if err != nil {

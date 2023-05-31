@@ -9,9 +9,9 @@ info (
 
 type CourseInfoRequest {
 	// TODO: add members here and delete this comment
-	University  string `json:"university"`
-	Course_id   string `json:"course_id"`
-	Course_main uint32 `json:"course_main"`
+	University  string `json:"university" form:"university"`
+	Course_id   string `json:"course_id" form:"course_id"`
+	Course_main uint32 `json:"course_main" form:"course_main"`
 }
 
 type CourseInfoResponse {
@@ -42,6 +42,6 @@ service attendinfo-api {
 	get /info/course(CourseInfoRequest) returns(CourseInfoResponse)
 	
 	@handler GetCounsellorAttInfo // TODO: set handler name and delete this comment
-	get /info/counsellor(CounsellorInfoRequest) returns(CounsellorInfoResponse)
+	post /info/counsellor(CounsellorInfoRequest) returns(CounsellorInfoResponse)
 	
 }

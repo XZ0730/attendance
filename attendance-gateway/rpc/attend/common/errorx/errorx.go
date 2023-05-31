@@ -25,6 +25,8 @@ const (
 	PuLLAttTimeERROR   = 30332
 	LocationDistERROR  = 30134
 	OverERROR          = 30135
+
+	FailedAttend = 300136
 )
 
 var errorMap = map[int]string{
@@ -48,6 +50,7 @@ var errorMap = map[int]string{
 	PuLLAttTimeERROR:   "当前时间段不能点名",
 	LocationDistERROR:  "定位计算错误",
 	OverERROR:          "超出签到范围",
+	FailedAttend:       "签到失败，请重新",
 }
 
 func GetERROR(code int) string {

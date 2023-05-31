@@ -6,6 +6,7 @@ type PullAttRequest struct {
 	Longitude    float64 `json:"longitude" form:"longitude"`
 	Latitude     float64 `json:"latitude" form:"latitude"`
 	CourseID     string  `json:"course_id" form:"course_id"`
+	CourseMain   int64   `json:"course_main" form:"course_main"`
 }
 
 type AttResponse struct {

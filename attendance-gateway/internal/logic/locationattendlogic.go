@@ -35,6 +35,13 @@ func (l *LocationAttendLogic) LocationAttend(req *types.LocationAttReq) (resp *t
 		Latitude:     req.Latitude,
 		SupervisorId: req.SupervisorID,
 	})
+	// if rsp.Status == 200 {
+	// 	supervisor_client, ok := model.Manager.Clients.Load(req.SupervisorID)
+	// 	if ok {
+
+	// 		// supervisor_client.(*model.Client).Send<-
+	// 	}
+	// }
 	return &types.AttResponse{
 		Status:  rsp.Status,
 		Message: rsp.Message,

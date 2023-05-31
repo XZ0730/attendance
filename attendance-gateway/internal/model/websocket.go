@@ -18,7 +18,8 @@ type Client struct {
 	Socket    *websocket.Conn
 	HeartBeat int64
 	Send      chan []byte
-	Done      chan struct{}
+
+	Done chan struct{}
 }
 type ClientManager struct {
 	Clients sync.Map
@@ -115,27 +116,33 @@ func (c *Client) Writemsg(req *types.NormalAttReq, svcCtx *svc.ServiceContext) {
 		fmt.Println("俺结束哩")
 		Manager.Unregister <- c
 	}()
+	//发送初始名单
+	req.Type = 0
+	nal := logic.NewNormalAttendLogic(context.Background(), svcCtx)
+	ar, err := nal.NormalAttend(req)
+	if err != nil {
+		fmt.Println("err:", err)
+	}
+	//从数据库中获取选课名单 生成map
+	//获取redis中缺勤的同学匹配生成实时考勤名单
+	//marshal传入
+	b, err2 := json.Marshal(ar)
+	if err2 != nil {
+		fmt.Println("err2:", err2)
+	}
+	fmt.Println("ar:", ar)
+	c.Socket.WriteMessage(websocket.TextMessage, b)
+
 	flag := false
+	// msg := []byte("")
 	for {
 		select {
-		case <-time.After(3 * time.Second):
-			//调用接口
-			req.Type = 0
-			nal := logic.NewNormalAttendLogic(context.Background(), svcCtx)
-			ar, err := nal.NormalAttend(req)
-			if err != nil {
-				fmt.Println("err:", err)
-			}
-			//从数据库中获取选课名单 生成map
-			//获取redis中缺勤的同学匹配生成实时考勤名单
-			//marshal传入
-			b, err2 := json.Marshal(ar)
-			if err2 != nil {
-				fmt.Println("err2:", err2)
-			}
-			fmt.Println("ar:", ar)
-			c.Socket.WriteMessage(websocket.TextMessage, b)
-			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "消息")
+		// case msg <- c.Send:
+		// 	c.Socket.WriteMessage(websocket.TextMessage, msg)
+		// case <-time.After(3 * time.Second):
+		// 	//调用接口
+
+		// 	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "消息")
 		case <-c.Done:
 			fmt.Println("俺结束哩")
 			flag = true
@@ -150,39 +157,32 @@ func (c *Client) LinkWith() {
 	defer func() {
 		fmt.Println("俺也结束哩")
 	}()
+	flag1 := false
 	for {
 		select {
-		case <-time.After(2 * time.Second):
-			c.Socket.WriteJSON("applink")
-		case <-c.Done:
-			fmt.Println("俺也结束哩")
-			break
-		}
-	}
-}
-func ProtectRoutine() {
-
-	for {
-
-		Manager.Clients.Range(func(key, value any) bool {
+		case <-time.After(5 * time.Second):
 			currentTime := time.Now().Unix()
-			if value.(*Client).IsHeartBeatTimeout(currentTime) {
+			if c.IsHeartBeatTimeout(currentTime) {
 				for i := 0; i < 2; i++ {
 					fmt.Println("range2:", i)
-					value.(*Client).Done <- struct{}{}
+					c.Done <- struct{}{}
 				}
 				fmt.Println("range2")
+				flag1 = true
 			}
-			<-time.After(3 * time.Second)
-			fmt.Println("i am here")
-			return true
-		})
+			if flag1 {
+				break
+			}
+		}
+		if flag1 {
+			break
+		}
 	}
 }
 func (c *Client) IsHeartBeatTimeout(cur int64) bool {
 	// add := time.Duration.Seconds(5)
 	// more := int64(add)
-	if c.HeartBeat+30 < cur {
+	if c.HeartBeat+25 < cur {
 		fmt.Println(c.HeartBeat+10, ":", cur)
 		return true
 	}
@@ -192,3 +192,27 @@ func (c *Client) UpdateHeartBeat() {
 	c.HeartBeat = time.Now().Unix()
 	return
 }
+
+// func ProtectRoutine() {
+
+//		for {
+//			fmt.Println("hello")
+//			RangeManager()
+//		}
+//	}
+// func RangeManager() {
+
+//		Manager.Clients.Range(func(key, value any) bool {
+//			currentTime := time.Now().Unix()
+//			if value.(*Client).IsHeartBeatTimeout(currentTime) {
+//				for i := 0; i < 2; i++ {
+//					fmt.Println("range2:", i)
+//					value.(*Client).Done <- struct{}{}
+//				}
+//				fmt.Println("range2")
+//			}
+//			<-time.After(10 * time.Second)
+//			fmt.Println("i am here")
+//			return true
+//		})
+//	}

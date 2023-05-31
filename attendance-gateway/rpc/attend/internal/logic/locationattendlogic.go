@@ -28,6 +28,7 @@ func NewLocationAttendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lo
 
 func (l *LocationAttendLogic) LocationAttend(in *attendservice.LocationAttRequest) (*attendservice.AttResponse, error) {
 	// todo: add your logic here and delete this line
+	fmt.Println("-----------------------")
 	l.svcCtx.RDB4.GeoAdd(l.ctx, in.GetCouseMain(), &redis.GeoLocation{
 		Longitude: in.GetLongitude(),
 		Latitude:  in.GetLatitude(),
@@ -42,14 +43,23 @@ func (l *LocationAttendLogic) LocationAttend(in *attendservice.LocationAttReques
 			Error:   err.Error(),
 		}, nil
 	}
+	fmt.Println("flo:", flo)
 	if flo > 15 {
-		fmt.Println("flo:", flo)
 		return &attendservice.AttResponse{
 			Status:  errorx.OverERROR,
 			Message: errorx.GetERROR(errorx.OverERROR),
 		}, nil
 	}
-
+	err = l.svcCtx.RDB5.ZAdd(l.ctx, in.GetCouseMain(), &redis.Z{
+		Score:  1,
+		Member: in.GetStudentId(),
+	}).Err()
+	if err != nil {
+		return &attendservice.AttResponse{
+			Status:  errorx.FailedAttend,
+			Message: errorx.GetERROR(errorx.FailedAttend),
+		}, nil
+	}
 	return &attendservice.AttResponse{
 		Status:  errorx.SUCCESS,
 		Message: errorx.GetERROR(errorx.SUCCESS),

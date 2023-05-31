@@ -1,10 +1,12 @@
 package rabbitmq
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"mq_server/model"
+	"mq_server/pkg"
 	"strconv"
 	"strings"
 	"time"
@@ -65,7 +67,7 @@ func (d *DelayMQ) Publish(message string) {
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(message),
-			Expiration:  "600000", // 设置两分钟的过期时间
+			Expiration:  "180000", // 设置两分钟的过期时间
 		})
 
 	failOnError(err, "Failed to publish a message")
@@ -129,6 +131,7 @@ func (d *DelayMQ) Consumer() {
 
 func (*DelayMQ) unRegisterAtt(msg <-chan amqp.Delivery) {
 	for req := range msg {
+		fmt.Println("----------------------------------------------------------------------------")
 		fmt.Println(time.Now())
 		fmt.Println("req:", string(req.Body))
 		mp := &model.MarshalPull{}
@@ -139,23 +142,31 @@ func (*DelayMQ) unRegisterAtt(msg <-chan amqp.Delivery) {
 			continue
 		}
 		cr := &model.Course{}
-		model.DB.Table("course").Where("course_id=? AND university=?", mp.CourseID, mp.University).First(&cr)
-		week, err2 := model.RDB1.HGet(model.RDB1.Context(), cr.University, strconv.Itoa(int(cr.Id))).Result()
-		if err2 != nil {
-			fmt.Println("week:", week)
-			fmt.Println("err2:", err2)
-			req.Ack(false)
-			continue
-		}
-		weekto, err := strconv.Atoi(week)
-		if err != nil {
+		week := pkg.GetWeek(model.RDB5)
+		if week == -1 {
 			fmt.Println("err:", err)
 			req.Ack(false)
 			continue
 		}
+		model.DB.Table("course").Where("course_id=? AND university=?", mp.CourseID, mp.University).First(&cr)
+		//计算周数--当前时间减去开学时间
+
+		// week, err2 := model.RDB1.HGet(model.RDB1.Context(), cr.University, strconv.Itoa(int(cr.Id))).Result()
+		// if err2 != nil {
+		// 	fmt.Println("week:", week)
+		// 	fmt.Println("err2:", err2)
+		// 	req.Ack(false)
+		// 	continue
+		// }
+		// weekto, err := strconv.Atoi(week)
+		// if err != nil {
+		// 	fmt.Println("err:", err)
+		// 	req.Ack(false)
+		// 	continue
+		// }
 		stu := make([]*model.LeaveTable, 0)
 		model.DB.Table("leave_table").
-			Where("course_id=? AND is_audit=3 AND tag_as=1 AND leave_course_from<=? AND leave_course_to >=? AND school_name=?", mp.CourseID, weekto+1, weekto+1, mp.University).
+			Where("course_id=? AND is_audit=3 AND tag_as=1 AND leave_course_from<=? AND leave_course_to >=? AND school_name=?", mp.CourseID, week, week, mp.University).
 			Find(&stu)
 		for _, s := range stu { //将请假的同学考勤状态设置为1
 			model.RDB5.ZAdd(model.RDB5.Context(), strconv.Itoa(int(cr.Id)), &redis.Z{
@@ -175,10 +186,11 @@ func (*DelayMQ) unRegisterAtt(msg <-chan amqp.Delivery) {
 			Scan(&results)
 		fmt.Println("测试2")
 		stus := make(map[string]*model.Result, len(results))
-		weekto = weekto + 1
-		weeknow := strconv.Itoa(weekto)
+		// weekto = weekto + 1
+		// weeknow := strconv.Itoa(weekto)
 		for _, v := range results {
-			v.Week = uint(weekto)
+			// v.Week = uint(weekto)
+			v.Week = uint(week)
 			stus[v.Code] = v
 		}
 		fmt.Println("测试3")
@@ -198,16 +210,16 @@ func (*DelayMQ) unRegisterAtt(msg <-chan amqp.Delivery) {
 			}
 			cnt++
 		}
-		fmt.Println("测试4")
+		// fmt.Println("测试4")
 
-		fmt.Println("测试5")
-		fmt.Println("mpL:", mp)
-		fmt.Println("week:", week)
+		// fmt.Println("测试5")
+		// fmt.Println("mpL:", mp)
+		// fmt.Println("week:", week)
 		//计算是否存在记录，如果缺勤人数为0，
 		var cntf int64
 		att := &model.AttendTable{}
 		model.DB.Table("attend_table").
-			Where("week=? AND course_id=? AND university=?", weekto, mp.CourseID, cr.University).First(&att).Count(&cntf)
+			Where("week=? AND course_id=? AND university=?", week, mp.CourseID, cr.University).First(&att).Count(&cntf)
 		if cntf > 0 {
 			if att.Unpresent != 0 {
 				if att.Unpresent > 1 {
@@ -231,37 +243,49 @@ func (*DelayMQ) unRegisterAtt(msg <-chan amqp.Delivery) {
 			CourseID:      mp.CourseID,
 			CourseName:    cr.Name,
 			University:    cr.University,
-			Week:          uint(weekto),
+			Week:          uint(week),
 			Teacher:       cr.TeacherName,
 			Unpresent:     uint(len(stuid)),
 			Unpresenter:   name,
 			UnpresenterID: id,
 		}
-		model.DB.Table("attend_table").Create(&at)
+		//考勤结果存入mysql
+		err2 := model.DB.Table("attend_table").Create(&at).Error
+		if err2 != nil {
+			fmt.Println("err:", err2)
+			req.Ack(false)
+			continue
+		}
 		result, _ := json.Marshal(stus)
-		fmt.Println("res:", string(result))
-		err = model.RDB6.HSet(model.RDB6.Context(), strconv.Itoa(int(cr.Id)), weeknow, string(result)).Err()
+		// fmt.Println("res:", string(result))
+		//将考勤结果存入redis
+		err = model.RDB6.HSet(model.RDB6.Context(), strconv.Itoa(int(cr.Id)), strconv.Itoa(int(week)), string(result)).Err()
 		if err != nil {
 			fmt.Println("err343:", err)
 			req.Ack(false)
 			continue
 		}
 		fmt.Println("测试6")
-		err3 := model.RDB7.HSet(model.RDB7.Context(), strconv.Itoa(int(cr.Id)), weekto, "1").Err() //点名结束 本周课程点名状态设置为1
+		//将本周考勤状态存入redis
+		err3 := model.RDB7.HSet(model.RDB7.Context(), strconv.Itoa(int(cr.Id)), strconv.Itoa(int(week)), "2").Err() //点名结束 本周课程点名状态设置为1
 		if err3 != nil {
 			fmt.Println("err3", err3)
 			req.Ack(false)
 			continue
 		}
-		err4 := model.RDB3.ZAdd(model.RDB3.Context(), mp.University, &redis.Z{
+		fmt.Println("RDB3:", model.RDB3)
+		_ = model.RDB3.ZAdd(context.Background(), mp.University, &redis.Z{
 			Score:  2,
 			Member: strconv.Itoa(int(cr.Id)),
 		}).Err()
-		if err4 != nil {
-			fmt.Println("err4", err4)
+		err5 := model.RDB1.HSet(context.Background(), mp.University, strconv.Itoa(int(cr.Id)), strconv.Itoa(int(week))).Err()
+		if err5 != nil {
+			fmt.Println("err5", err5)
 			req.Ack(false)
 			continue
 		}
+		// s, _ := model.RDB1.HGet(context.Background(), mp.University, strconv.Itoa(int(cr.Id))).Result()
+		// fmt.Println("s", s)
 		fmt.Println("测试7")
 		req.Ack(false)
 	}

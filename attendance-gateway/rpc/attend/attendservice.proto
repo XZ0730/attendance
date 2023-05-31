@@ -8,6 +8,7 @@ message PullAttRequest {
   double Longitude = 2;
   double Latitude = 3;
   string CourseID = 4;
+  int64 CourseMain=5;
 }
 
 message AttResponse {

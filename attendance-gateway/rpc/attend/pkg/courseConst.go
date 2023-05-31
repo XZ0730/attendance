@@ -29,10 +29,10 @@ var CourseMap = map[uint]CourseTime{
 	5:  *NewCouseTime("13:50", "14:30"),
 	6:  *NewCouseTime("14:45", "15:25"),
 	7:  *NewCouseTime("15:40", "16:20"),
-	8:  *NewCouseTime("16:35", "17:15"),
+	8:  *NewCouseTime("16:20", "18:50"),
 	9:  *NewCouseTime("18:50", "19:30"),
-	10: *NewCouseTime("19:45", "20:25"),
-	11: *NewCouseTime("20:50", "21:30"),
+	10: *NewCouseTime("19:30", "20:25"),
+	11: *NewCouseTime("20:25", "23:59"),
 }
 var weekDay = map[uint]string{
 	1: "Monday",
@@ -70,9 +70,9 @@ func JudgeTime(cr *model.Course) bool {
 	fmt.Println("====2=====================")
 	weeknow := math.Ceil(dist.Hours() / 24 / 7)
 	fmt.Println("crweektype:", cr.WeekType)
-	if cr.WeekType == 1 && (int(weeknow)%2) == 0 {
+	if cr.WeekType == 1 && (int(weeknow)%2) == 0 && cr.WeekType != 0 {
 		return false
-	} else if cr.WeekDay == 2 && (int(weeknow)%2) == 1 {
+	} else if cr.WeekType == 2 && (int(weeknow)%2) == 1 && cr.WeekType != 0 {
 		return false
 	}
 

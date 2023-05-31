@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"info/attendinfo"
@@ -29,11 +30,11 @@ func (l *GetCounsellorAttInfoLogic) GetCounsellorAttInfo(in *attendinfo.Counsell
 	majorRate := make([]*attendinfo.MajorRate, 0)
 	courseRate := make([]*attendinfo.CourseRate, 0)
 	var courseRateMap sync.Map
-	// fmt.Println("------测试5-------------")
+	fmt.Println("------测试5-------------")
 	for _, v := range in.GetMajorList() {
 		rate1 := &attendinfo.MajorRate{}
 		rate1.Major = v.GetMajor()
-		// fmt.Println("------测试6-------------")
+		fmt.Println("------测试6-------------")
 		for _, u := range v.GetCouseMain() {
 			_, ok := courseRateMap.Load(u)
 			if ok {

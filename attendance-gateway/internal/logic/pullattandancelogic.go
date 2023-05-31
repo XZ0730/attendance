@@ -38,6 +38,7 @@ func (l *PullAttandanceLogic) PullAttandance(req *types.PullAttRequest) (resp *t
 		CourseID:     req.CourseID,
 		Longitude:    req.Longitude,
 		Latitude:     req.Latitude,
+		CourseMain:   req.CourseMain,
 	})
 	fmt.Println("rsp:", rsp)
 	return &types.AttResponse{

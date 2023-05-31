@@ -29,7 +29,6 @@ func main() {
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 	go model.Manager.Start()
-	go model.ProtectRoutine()
 	opt := make(map[string]string)
 	opt["username"] = "admin"
 	opt["password"] = "123456"

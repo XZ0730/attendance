@@ -2,9 +2,9 @@
 package types
 
 type CourseInfoRequest struct {
-	University  string `json:"university"`
-	Course_id   string `json:"course_id"`
-	Course_main uint32 `json:"course_main"`
+	University  string `json:"university" form:"university"`
+	Course_id   string `json:"course_id" form:"course_id"`
+	Course_main uint32 `json:"course_main" form:"course_main"`
 }
 
 type CourseInfoResponse struct {

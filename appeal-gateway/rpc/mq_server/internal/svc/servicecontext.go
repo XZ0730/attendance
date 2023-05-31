@@ -14,6 +14,7 @@ type ServiceContext struct {
 	Mq_server *rabbitmq.RabbitMQ
 	MysqlDB   *gorm.DB
 	RDB1      *redis.Client
+	RDB3      *redis.Client
 	RDB5      *redis.Client
 	RDB6      *redis.Client
 	RDB7      *redis.Client
@@ -25,6 +26,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Mq_server: rabbitmq.InitRabbitMQ(&c),
 		MysqlDB:   model.Init(&c),
 		RDB1:      model.InitRedis(&c),
+		RDB3:      model.InitRedis3(&c),
 		RDB5:      model.InitRedis5(&c),
 		RDB6:      model.InitRedis6(&c),
 		RDB7:      model.InitRedis7(&c),
